@@ -7,11 +7,49 @@ I don't consider myself a computer scientist or a programmer, but my chosen care
 I'm not going to sing R's praises, that happens 10 months of the year. The goal of this talk, is to encourage those of you who program primarily in R to learn another language, those of you who think your workflows are subpar to try other methods and bring back new methods and ideas to R, maybe even a high quality package for R programmers worldwide. 
 
 
+## What is this About?
+
+1. A Brief History of R
+2. A mostly esoteric look into Rlang from a language design. This includes things like
+    1. Is R pass by value or pass by reference
+    2. How does R look after memory?
+    3. An introduction to scoping and closures.
+    4. Lazy Eval to tidyeval/quosures
+    5. Syntax quirks like `=` vs `<-`
+3. A brief critique on features lacking 
+    1. Namespaces
+    2. Weak primitives and forced vectors
+4. Other concerns
+    1. 1 indexing and what it means
+    2. Radford Neal and pqR.
+
+
+## Quiz
+
+1. How many people here program regularly in another language besides R?
+2. Level of R developer (Beginner, Intermediate and Advanced)?
+3. How many would feel comfortable writing and releasing an R package internally?
+4. How many would feel comfortable using RCpp?
+5. How many have deployed R into production?
+
+
 ## Intro
 
 R was first written as an open source implementation of Bell's S language at Auckland Uni back in 1997 (Hadley went there from 1999-2004) with work starting in 1992. Statistical computing was primarily closed source at this time with SAS, SPSS and S/Splus and even Ross Ihaka and Robert Gentleman initally considered making R a product instead of a free open source language, so we should be glad that this ended up better than expected. Comparing R and Splus with Octave and Matlab, it's quite possible that R would never have reached the popularity it enjoys today. In fact without R, it's quite possible to imagine even fewer data scientists coming from a mathematical background, and without Hadley, it's quite possible to imagine R remaining a pure domain of university and research instead of it's current mixed usage.
 
-R is combination of Scheme and S. Scheme is a general purpose programming language and S was the statistical language with the flexibility to make doing statistics easy. The mix of imperative (change state with statements - think a[1] <- 3) and functional styles (change state only via functions apply(a, sum)) is primarily from Scheme. In fact R and Python share a common ancestor in Lisp which is why so much of the syntax and programming style seems so similar. S scripts will run almost unmodified in R, that's how much the syntax was borrowed. R&R realised the power of having an external package system and CRAN and the language were released in early 1997 and later released to the GNU later that year. The first stable release (1.0) came out in 2000 and it 2002 it got S4 methods for oo programming. We're currently on 3.5 as of 2018.
+R is combination of Scheme and S. Scheme is a general purpose programming language and S was the statistical language with the flexibility to make doing statistics easy. The mix of imperative (change state with statements - think a[1] <- 3) and functional styles (change state only via functions apply(a, sum)) is primarily from Scheme, while S gives us a lot of the syntax doing with vector operations and formulas. In fact R and Python share a common ancestor in Lisp which is why so much of the syntax and programming style seems so similar. S scripts will run almost unmodified in R, that's how much the syntax was borrowed. R&R realised the power of having an external package system and CRAN and the language were released in early 1997 and later released to the GNU later that year. The first stable release (1.0) came out in 2000 and it 2002 it got S4 methods. We're currently on 3.5 as of 2018.
+
+The mix of imperative and functional styles seem to be a winner in the modern day data analytics languages. N
+
+### 
+
+
+
+
+
+### The Problems
+
+R has gone through a lot of development and the language today, is in far better shape than it was in 2012 which is when most of the critiques of R, such as aRgh, R inferno and even Ross Ihaka suggesting that we should step away from R as a language and start again. The fact that Python came out of basically nowhere to overtake R is a testament to this, and the surprisingly fast growth of Julia is also a testament to variety of choice out there and the fact that R doesn't have very many converts to the language (outside MATLAB, SAS or SPSS)
 
 R has a number of implementations besides the GNU version. Radford Neal of UToronto has released pqR (pretty quick R) which supports multi-threading. Revolution Analytics/Microsoft has their own version too, with similar claims including improved stability. Renjin and Riposte are other implementations, but are significantly less well known. The GNU R we all use is by far the most popular, but the claims of the alternative developers is interesting - Radford Neal complains about the poor design of R's Syntax and Bob Carpenter of STAN discusses how he developed the syntax to be like R without it's failings, and the implication of stability from Revolution R is a bit concerning. Even Hadley uses language that reveals his concerns over the R language on occassion, and the man has not been invited to be on R core committers group despite all he's done for the language.
 
@@ -174,6 +212,11 @@ Now, put your hand up, how often does the indexing actually matter that much in 
 ## Consistency > Syntactic Sugar
 
 ### What is the difference between `<-` and `=`?
+
+```r
+x<-y
+x < -y
+```
 
 ### Quosures, tidyeval, and programming with `dplyr`
 
