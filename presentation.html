@@ -3154,24 +3154,24 @@ slide:not(.current) .plotly.html-widget{
 <ul>
 <li>How many languages can you program in besides R?</li>
 <li>Have you used S3 or S4 methods?</li>
+<li>Do you consider yourself a user or a developer?</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>What to Expect</h2></hgroup><article  id="what-to-expect">
+
+<ul>
+<li>Hadley’s Advanced R without Hadley</li>
+<li>Some Comp Sci theory and terms</li>
+<li>Some cross language comparisons</li>
+<li>Mini metaprogramming</li>
+<li>Harsh comments directed at R’s core team.</li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2>TOC</h2></hgroup><article  id="toc">
 
 <ol>
-<li>Language
-
-<ul>
-<li>What is a programming language</li>
-<li>Functional vs Object Orientated</li>
-<li>Mutability vs Immutable</li>
-</ul></li>
-<li>History of R
-
-<ul>
-<li>S</li>
-<li>Scheme</li>
-</ul></li>
+<li>Language</li>
+<li>History of R</li>
 <li>R as a Language
 
 <ul>
@@ -3192,12 +3192,12 @@ slide:not(.current) .plotly.html-widget{
 
 </article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Programming Languages</h2></hgroup><article  id="programming-languages">
 
-</article></slide><slide class=""><hgroup><h2>Language</h2></hgroup><article  id="language">
+</article></slide><slide class=""><hgroup><h2>Subtopics</h2></hgroup><article  id="subtopics">
 
 <ul>
 <li><strong>What is a programming language?</strong></li>
-<li>Functional vs Object Orientated</li>
-<li>Mutability vs Immutable</li>
+<li><strong>Functional vs Object Orientated</strong></li>
+<li><strong>Mutability vs Immutable</strong></li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2>What is a Programming Language</h2></hgroup><article  id="what-is-a-programming-language">
@@ -3212,6 +3212,24 @@ slide:not(.current) .plotly.html-widget{
 <li>Java added the concept of <code>lambda</code>s, the ability to pass functions as arguments</li>
 </ul></li>
 <li>Each language has an implementation. Usually the people who write the language spec, provide a reference implementation</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>R as a language</h2></hgroup><article  id="r-as-a-language">
+
+<ul>
+<li>R is not formally defined like most programming languages.</li>
+<li>R is specified by the implementation - GNU R
+
+<ul>
+<li>It is simulataneously loosely defined</li>
+<li>And impossible to write a new version (due to implementation specific problems)</li>
+</ul></li>
+<li>Other dialects
+
+<ul>
+<li>pqR - written by Radford Neal to be more performant, it branches of R 2.15</li>
+<li>Revolution R - powering Azure’s R, it’s a closed source implementation with supposedly better performance,</li>
+</ul></li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2>Python as a language</h2></hgroup><article  id="python-as-a-language">
@@ -3233,30 +3251,45 @@ slide:not(.current) .plotly.html-widget{
 <li>You also have Cython which is an extension of Python with typing for speed, and RPython which is a limited subset of the langauge.</li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>R as a language</h2></hgroup><article  id="r-as-a-language">
+</article></slide><slide class=""><hgroup><h2>Functional Languages</h2></hgroup><article  id="functional-languages">
 
 <ul>
-<li>R is not formally defined like most programming languages.</li>
-<li>R is specified by the implementation - GNU R
+<li>Basically mathematics turned into code (Lambda Calculus)</li>
+<li>Composed purely of functions, no state
 
 <ul>
-<li>It is simulataneously loosely defined</li>
-<li>And impossible to write a new version (due to implementation specific problems)</li>
+<li>global state causes a majority of errors</li>
 </ul></li>
-<li>Other dialects
-
-<ul>
-<li>pqR - written by Radford Neal to be more performant, it branches of R 2.15</li>
-<li>Revolution R - powering Azure’s R, it’s a closed source implementation with significantly better performance, and many patches proposed to GNU R have likely ended up in Revolution R.</li>
-</ul></li>
+<li>Functions are the same as variables</li>
+<li>No memory management</li>
+<li>Immutable</li>
+<li>Looping is not possible, only recursion is possible.</li>
+<li><code>apply</code>/<code>map</code> and ideas such as list comprehensions</li>
 </ul>
+
+<pre class = 'prettyprint lang-haskell'># haskell
+factorial n = if n &lt; 2 then 1 else n * factorial (n-1)</pre>
+
+</article></slide><slide class=""><hgroup><h2>R as a functional language</h2></hgroup><article  id="r-as-a-functional-language">
+
+<ul>
+<li>You can assign functions to other names</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>test = sum
+test(1:10)</pre>
+
+<pre >## [1] 55</pre>
+
+<ul>
+<li>you can take them into another equation (and define without naming)</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>sapply(1:10, function(x) x^2)</pre>
+
+<pre >##  [1]   1   4   9  16  25  36  49  64  81 100</pre>
 
 </article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>History of R</h2></hgroup><article  id="history-of-r">
-
-<ul>
-<li>S</li>
-<li>Scheme</li>
-</ul>
 
 </article></slide><slide class=""><hgroup><h2>History of S</h2></hgroup><article  id="history-of-s">
 
@@ -3270,17 +3303,19 @@ slide:not(.current) .plotly.html-widget{
 <li>A programming language, not just some fortran bindings</li>
 </ul></li>
 <li>1998 had the 4.0 release. Mostly better OO (S4)</li>
+<li>S is purely imperative</li>
 </ul>
 
 <pre class = 'prettyprint lang-r'>factorial &lt;- function(n)
   if (n&lt;=0) 1 else n * factorial(n - 1)</pre>
 
-</article></slide><slide class=""><hgroup><h2>History of R - Scheme</h2></hgroup><article  id="history-of-r---scheme">
+</article></slide><slide class=""><hgroup><h2>History of Scheme</h2></hgroup><article  id="history-of-scheme">
 
 <ul>
 <li>Scheme is a dialect of Lisp (List Processor) one of the first functional programming languages.</li>
 <li>Lisp was introduced as a purely mathematical langauge, and Scheme filled in the missing parts to run on a computer.</li>
 <li>Functional languages have become very popular in Software Engineering today for being expressive and Lisp has been incredibly influential despite never finding much success itself.</li>
+<li>Scheme is a mix of functional and imperative style</li>
 <li>R, Julia and Python all trace back to Lisp, R via Scheme, Python via Common Lisp, another Lisp dialect</li>
 </ul>
 
@@ -3288,12 +3323,10 @@ slide:not(.current) .plotly.html-widget{
   (if (&lt;= n 0)) 1 (* n factorial(n-1))
 ))</pre>
 
-</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Programming Languages</h2></hgroup><article  id="programming-languages-1">
+</article></slide><slide class=""><hgroup><h2>History of R</h2></hgroup><article  id="history-of-r-1">
 
 <ul>
-<li>S is an imperative language</li>
-<li>Scheme is a functional language</li>
-<li>R is a mixed imperative/functional language</li>
+<li>Combination of S syntax on a Scheme runtime.</li>
 </ul></article></slide>
 
 

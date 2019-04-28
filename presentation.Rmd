@@ -6,7 +6,7 @@ output: ioslides_presentation
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## My Programming History
@@ -60,13 +60,18 @@ knitr::opts_chunk$set(echo = FALSE)
 
 # Programming Languages
 
-## Subtopics
+## Programming Languages
 
   - **What is a programming language?**
-  - **Functional vs Object Orientated**
-  - **Mutability vs Immutable**
+    - R as a programming Language
+    - Python as  Programming Language
+  - **Functional vs imperative**
+    - Functional Languages
+    - R as a Functional Language
+    - Imperative and OO
+    - R as imperative and OO
 
-## What is a Programming Language
+## What is a Programming Language?
 
 - Language != Implementation
 - A langauge is a defined in abstract way, usually syntax specifications and behaviour
@@ -97,6 +102,37 @@ knitr::opts_chunk$set(echo = FALSE)
   - Jython - compiles to the JVM
 - You also have Cython which is an extension of Python with typing for speed, and RPython which is a limited subset of the langauge.
 
+## Functional Languages
+
+- Basically mathematics turned into code (Lambda Calculus)
+- Composed purely of functions, no state
+  - global state causes a majority of errors
+- Functions are the same as variables
+- No memory management
+- Immutable is commonly
+- Looping is not possible, only recursion is possible.
+- `apply`/`map` and ideas such as list comprehensions
+
+```haskell
+# haskell
+factorial n = if n < 2 then 1 else n * factorial (n-1)
+```
+
+## R as a functional language
+
+- You can assign functions to other names
+```{r}
+test = sum
+test(1:10)
+```
+- you can take them into another equation (and define without naming)
+```{r}
+sapply(1:10, function(x) x^2)
+```
+- Other goodies (we'll cover)
+
+## OO 
+
 # History of R
 
 ## History of S
@@ -107,6 +143,7 @@ knitr::opts_chunk$set(echo = FALSE)
   - Object Oriented (S3) methods introduced
   - A programming language, not just some fortran bindings
 - 1998 had the 4.0 release. Mostly better OO (S4)
+- S is purely imperative
 
 ```r
 factorial <- function(n)
@@ -118,6 +155,7 @@ factorial <- function(n)
 - Scheme is a dialect of Lisp (List Processor) one of the first functional programming languages.
 - Lisp was introduced as a purely mathematical langauge, and Scheme filled in the missing parts to run on a computer.
 - Functional languages have become very popular in Software Engineering today for being expressive and Lisp has been incredibly influential despite never finding much success itself.
+- Scheme is a mix of functional and imperative style
 - R, Julia and Python all trace back to Lisp, R via Scheme, Python via Common Lisp, another Lisp dialect
 
 ```scheme
@@ -128,7 +166,7 @@ factorial <- function(n)
 
 ## History of R
 
-- Combination of S syntax on a Scheme runtime
+- Combination of S syntax on a Scheme runtime.
 
 
 
