@@ -31,3 +31,27 @@ address(a)
 idt(a)
 .Internal(inspect(a))
 idins(a)
+
+
+#pipe fun
+`%pp%` = function(lhs, rhs){
+  
+  rhs(lhs)
+}
+
+93 %pp% adder
+
+
+## frame fuckery
+
+addToGlobal = function(k, val){
+  fr= parent.frame()
+  assign(k, val, fr)
+}
+
+herpyderp
+
+addToGlobal("herpyderp")
+
+herpyderp
+
