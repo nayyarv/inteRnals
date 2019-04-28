@@ -1,0 +1,136 @@
+---
+title: "inteRnals"
+author: "Varun Nayyar"
+date: "27/04/2019"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## My Programming History
+
+- 2010: Started programming. Began with C, but ran away from computers because it was hard.
+- 2011: Started programming with R in 2011, realised it wasn't so bad. R became my daily driver and I used R instead of Matlab at university 
+  - before the tidyverse
+  - used knitr before R markdown (shell script escapes on pdflatex)
+  - mostly tiny uni datasets, never ran into problems
+  - I am so glad it's better today.
+  
+  
+## My Programming History
+- 2013: Started programming in Python while at Cochlear. Fell in love with programming
+  - Started to run into performance issues with R. Sessions kept crashing and datasets started getting bigger.
+  - Became a Bayesian - now I needed efficiency and started to program a lot more (BUGS anybody)
+  - Started to switch to python a lot more.
+- 2014: Returned to comp sci becoming more confident with C, Java. Picked up some Haskell and CUDA too!
+- 2015-2018: Working for HFT, mostly using Python and C++
+- 2018: Used R for census and survey analysis (Parliament)
+- 2019: Using Julia for Speech Recognition and Deep Learning.
+
+## Informal Survey
+
+- How many languages can you program in besides R?
+- Have you used S3 or S4 methods?
+- Do you consider yourself a user or a developer?
+
+## What to Expect
+
+ - Hadley's Advanced R without Hadley
+ - Some Comp Sci theory and terms
+ - Some cross language comparisons
+ - Mini metaprogramming
+ - Harsh comments directed at R's core team.
+
+## TOC
+
+1. Language
+2. History of R
+3. R as a Language
+    - Basic Types
+    - R and memory (pass by value and GC)
+    - Lexical Scoping and closures
+    - Lazy Evaluation
+    - S3 and S4 methods
+4. Experiments in R (merge with above)
+    - Lazy Eval and Quosures
+    - Environments and Closures
+    - Infix operators
+
+# Programming Languages
+
+## Subtopics
+
+  - **What is a programming language?**
+  - **Functional vs Object Orientated**
+  - **Mutability vs Immutable**
+
+## What is a Programming Language
+
+- Language != Implementation
+- A langauge is a defined in abstract way, usually syntax specifications and behaviour
+- Languages can grow and evolve, by adding new syntax or new features.
+  - Python added the `@` syntax for matrix multiplication
+  - Java added the concept of `lambda`s, the ability to pass functions as arguments
+- Each language has an implementation. Usually the people who write the language spec, provide a reference implementation
+
+
+## R as a language
+
+- R is not formally defined like most programming languages.
+- R is specified by the implementation - GNU R
+  - It is simulataneously loosely defined
+  - And impossible to write a new version (due to implementation specific problems)
+- Other dialects
+  - pqR - written by Radford Neal to be more performant, it branches of R 2.15
+  - Revolution R - powering Azure's R, it's a closed source implementation with supposedly better performance,
+
+## Python as a language
+
+- Spec produced by Python Foundation.
+- Also produce CPython, a reference implemention implemented in C
+  - Has very good interoperability with C, but this is not part of the Python spec, a feature of CPython
+- Other dialects
+  - PyPy (Just In Time compiled) - can be very quick, but doesn't play nicely with C extensions (say numpy)
+  - Stackless Python - used by EVE online, allows for massive concurrency
+  - Jython - compiles to the JVM
+- You also have Cython which is an extension of Python with typing for speed, and RPython which is a limited subset of the langauge.
+
+# History of R
+
+## History of S
+
+- Developed in the 70s at Bell labs by John Chambers
+- 1988 had the 3.0 release - it's seminal release
+  - Rewritten in C
+  - Object Oriented (S3) methods introduced
+  - A programming language, not just some fortran bindings
+- 1998 had the 4.0 release. Mostly better OO (S4)
+
+```r
+factorial <- function(n)
+  if (n<=0) 1 else n * factorial(n - 1)
+```
+
+## History of Scheme
+
+- Scheme is a dialect of Lisp (List Processor) one of the first functional programming languages.
+- Lisp was introduced as a purely mathematical langauge, and Scheme filled in the missing parts to run on a computer.
+- Functional languages have become very popular in Software Engineering today for being expressive and Lisp has been incredibly influential despite never finding much success itself.
+- R, Julia and Python all trace back to Lisp, R via Scheme, Python via Common Lisp, another Lisp dialect
+
+```scheme
+(define factorial (lambda (n)
+  (if (<= n 0)) 1 (* n factorial(n-1))
+))
+```
+
+## History of R
+
+- Combination of S syntax on a Scheme runtime
+
+
+
+
+
