@@ -3192,15 +3192,26 @@ slide:not(.current) .plotly.html-widget{
 
 </article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Programming Languages</h2></hgroup><article  id="programming-languages">
 
-</article></slide><slide class=""><hgroup><h2>Subtopics</h2></hgroup><article  id="subtopics">
+</article></slide><slide class=""><hgroup><h2>Programming Languages</h2></hgroup><article  id="programming-languages-1">
 
 <ul>
-<li><strong>What is a programming language?</strong></li>
-<li><strong>Functional vs Object Orientated</strong></li>
-<li><strong>Mutability vs Immutable</strong></li>
+<li><strong>What is a programming language?</strong>
+
+<ul>
+<li>R as a programming Language</li>
+<li>Python as Programming Language</li>
+</ul></li>
+<li><strong>Functional vs imperative</strong>
+
+<ul>
+<li>Functional Languages</li>
+<li>R as a Functional Language</li>
+<li>Imperative Languages</li>
+<li>R as imperative</li>
+</ul></li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>What is a Programming Language</h2></hgroup><article  id="what-is-a-programming-language">
+</article></slide><slide class=""><hgroup><h2>What is a Programming Language?</h2></hgroup><article  id="what-is-a-programming-language">
 
 <ul>
 <li>Language != Implementation</li>
@@ -3262,13 +3273,14 @@ slide:not(.current) .plotly.html-widget{
 </ul></li>
 <li>Functions are the same as variables</li>
 <li>No memory management</li>
-<li>Immutable</li>
-<li>Looping is not possible, only recursion is possible.</li>
-<li><code>apply</code>/<code>map</code> and ideas such as list comprehensions</li>
+<li>Immutable is commonly</li>
+<li>Looping is not allowed, only recursion is possible.</li>
+<li><code>apply</code>/<code>map</code> and ideas such as list comprehensions are functional concepts</li>
 </ul>
 
 <pre class = 'prettyprint lang-haskell'># haskell
-factorial n = if n &lt; 2 then 1 else n * factorial (n-1)</pre>
+factorial 0 = 1
+factorial n = n * factorial (n-1)</pre>
 
 </article></slide><slide class=""><hgroup><h2>R as a functional language</h2></hgroup><article  id="r-as-a-functional-language">
 
@@ -3288,6 +3300,46 @@ test(1:10)</pre>
 <pre class = 'prettyprint lang-r'>sapply(1:10, function(x) x^2)</pre>
 
 <pre >##  [1]   1   4   9  16  25  36  49  64  81 100</pre>
+
+<ul>
+<li>Other goodies (we’ll cover)</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Imperative Programming</h2></hgroup><article  id="imperative-programming">
+
+<ul>
+<li>Imperative programming is a direct contrast to functional programming. In this case, variables change state</li>
+<li>Object Oriented (OO) is simply an extension of imperative programming to be more modular and maintainable.</li>
+<li>Fine grained control of computer resources (memory and threads)</li>
+<li>Highly performant, but easy to introduce errors.</li>
+<li>Most functional languages are based on imperative languages</li>
+</ul>
+
+<pre class = 'prettyprint lang-c'>int vec[10] = {1,2,3,4,5,6,7,8,9,10}; 
+int sum = 0;
+for (int i=0; i &lt; 10, i ++){
+  sum += vec[i]
+}</pre>
+
+</article></slide><slide class=""><hgroup><h2>R as an imperative language</h2></hgroup><article  id="r-as-an-imperative-language">
+
+<pre class = 'prettyprint lang-r'>total = 0
+vec = 1:10
+for (i in vec){
+  total =  total + i
+}
+total</pre>
+
+<pre >## [1] 55</pre>
+
+<pre class = 'prettyprint lang-r'>attr(total, &quot;N&quot;) = 10
+class(total) = &quot;Sum&quot;
+tibble::as_tibble(attributes(total))</pre>
+
+<pre >## # A tibble: 1 x 2
+##       N class
+##   &lt;dbl&gt; &lt;chr&gt;
+## 1    10 Sum</pre>
 
 </article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>History of R</h2></hgroup><article  id="history-of-r">
 

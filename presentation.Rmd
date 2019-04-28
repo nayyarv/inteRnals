@@ -7,6 +7,8 @@ output: ioslides_presentation
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+requireNamespace("tibble")
+library(pryr)
 ```
 
 ## My Programming History
@@ -48,11 +50,6 @@ knitr::opts_chunk$set(echo = TRUE)
 1. Language
 2. History of R
 3. R as a Language
-    - Basic Types
-    - R and memory (pass by value and GC)
-    - Lexical Scoping and closures
-    - Lazy Evaluation
-    - S3 and S4 methods
 4. Experiments in R (merge with above)
     - Lazy Eval and Quosures
     - Environments and Closures
@@ -68,8 +65,8 @@ knitr::opts_chunk$set(echo = TRUE)
   - **Functional vs imperative**
     - Functional Languages
     - R as a Functional Language
-    - Imperative and OO
-    - R as imperative and OO
+    - Imperative Languages
+    - R as imperative 
 
 ## What is a Programming Language?
 
@@ -110,12 +107,13 @@ knitr::opts_chunk$set(echo = TRUE)
 - Functions are the same as variables
 - No memory management
 - Immutable is commonly
-- Looping is not possible, only recursion is possible.
-- `apply`/`map` and ideas such as list comprehensions
+- Looping is not allowed, only recursion is possible.
+- `apply`/`map` and ideas such as list comprehensions are functional concepts
 
 ```haskell
 # haskell
-factorial n = if n < 2 then 1 else n * factorial (n-1)
+factorial 0 = 1
+factorial n = n * factorial (n-1)
 ```
 
 ## R as a functional language
@@ -131,7 +129,52 @@ sapply(1:10, function(x) x^2)
 ```
 - Other goodies (we'll cover)
 
-## OO 
+## Imperative Programming
+
+- Imperative programming is a direct contrast to functional programming. In this case, variables change state
+- Object Oriented (OO) is simply an extension of imperative programming to be more modular and maintainable. 
+- Fine grained control of computer resources (memory and threads)
+- Highly performant, but easy to introduce errors.
+- Most functional languages are based on imperative languages
+
+```c
+int vec[10] = {1,2,3,4,5,6,7,8,9,10}; 
+int sum = 0;
+for (int i=0; i < 10, i ++){
+  sum += vec[i]
+}
+```
+
+## R as an imperative language
+
+```{r}
+total = 0
+vec = 1:10
+for (i in vec){
+  total =  total + i
+}
+total
+```
+
+```{r}
+attr(total, "N") = 10
+class(total) = "Sum"
+tibble::as_tibble(attributes(total))
+```
+
+## R is a mixed Imperative/Functional Language
+
+- This has become the dominant programming paradigm, especially in Data Analysis.
+- Python, Scala, Julia and javascript are all mixed functional/imperative to varying degrees
+- Java and C++ have also taken on a lot of functional features
+- Most popular pure functional languages are primarily academic curiosity
+
+# insert line graph of varying functional/imperativeness
+
+haskell on functional, Java on imperative
+Python closer to imperative
+R middle
+Julia closer to functional
 
 # History of R
 
@@ -166,9 +209,36 @@ factorial <- function(n)
 
 ## History of R
 
-- Combination of S syntax on a Scheme runtime.
+- Combination of S syntax on a Scheme interpreter
+- Mixed imperative/functional style. Is a functional language at it's core.
+- Released for free (almost didn't) in a time of open source infancy, when competitors such SAS, SPSS, S+ were paid products
+- The language is incredibly flexible, which allows for rich user usage.
+- CRAN was perhaps the biggest innovation.
+- **Strong focus on User Experience, than developer convenience**
 
+# The R language
 
+## The R language
 
+  - Basic Types
+  - R and memory (pass by value and GC)
+  - Lexical Scoping and closures
+  - Lazy Evaluation
+  - S3 and S4 methods
+  
+## Types
+ - Might Remove
+ 
+ 
+## R and Memory
+
+Is R:
+
+- pass by value (copies data for a function)
+- pass by reference (passes the underlying data)
+
+## Copy on Modify
+
+- R implements these mechanics 
 
 
