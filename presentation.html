@@ -3172,15 +3172,7 @@ slide:not(.current) .plotly.html-widget{
 <ol>
 <li>Language</li>
 <li>History of R</li>
-<li>R as a Language
-
-<ul>
-<li>Basic Types</li>
-<li>R and memory (pass by value and GC)</li>
-<li>Lexical Scoping and closures</li>
-<li>Lazy Evaluation</li>
-<li>S3 and S4 methods</li>
-</ul></li>
+<li>R as a Language</li>
 <li>Experiments in R (merge with above)
 
 <ul>
@@ -3341,6 +3333,19 @@ tibble::as_tibble(attributes(total))</pre>
 ##   &lt;dbl&gt; &lt;chr&gt;
 ## 1    10 Sum</pre>
 
+</article></slide><slide class=""><hgroup><h2>R is a mixed Imperative/Functional Language</h2></hgroup><article  id="r-is-a-mixed-imperativefunctional-language">
+
+<ul>
+<li>This has become the dominant programming paradigm, especially in Data Analysis.</li>
+<li>Python, Scala, Julia and javascript are all mixed functional/imperative to varying degrees</li>
+<li>Java and C++ have also taken on a lot of functional features</li>
+<li>Most popular pure functional languages are primarily academic curiosity</li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>insert line graph of varying functional/imperativeness</h2></hgroup><article  id="insert-line-graph-of-varying-functionalimperativeness">
+
+<p>haskell on functional, Java on imperative Python closer to imperative R middle Julia closer to functional</p>
+
 </article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>History of R</h2></hgroup><article  id="history-of-r">
 
 </article></slide><slide class=""><hgroup><h2>History of S</h2></hgroup><article  id="history-of-s">
@@ -3378,8 +3383,497 @@ tibble::as_tibble(attributes(total))</pre>
 </article></slide><slide class=""><hgroup><h2>History of R</h2></hgroup><article  id="history-of-r-1">
 
 <ul>
-<li>Combination of S syntax on a Scheme runtime.</li>
-</ul></article></slide>
+<li>Combination of S syntax on a Scheme interpreter</li>
+<li>Mixed imperative/functional style. Is a functional language at it’s core.</li>
+<li>Released for free (almost didn’t) in a time of open source infancy, when competitors such SAS, SPSS, S+ were paid products</li>
+<li>The language is incredibly flexible, which allows for rich user usage.</li>
+<li>CRAN was perhaps the biggest innovation.</li>
+<li><strong>Strong focus on User Experience, than developer convenience</strong></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>The R language</h2></hgroup><article  id="the-r-language">
+
+</article></slide><slide class=""><hgroup><h2>The R language</h2></hgroup><article  id="the-r-language-1">
+
+<ul>
+<li>Basic Types</li>
+<li>R and memory (pass by value and GC)</li>
+<li>Lexical Scoping and closures</li>
+<li>Lazy Evaluation</li>
+<li>S3 and S4 methods</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Types</h2></hgroup><article  id="types">
+
+<ul>
+<li>Might Remove</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>R and Memory</h2></hgroup><article  id="r-and-memory">
+
+<p>Is R:</p>
+
+<ul>
+<li>pass by value (copies data for a function)</li>
+<li>pass by reference (passes the underlying data)</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Copy on Modify</h2></hgroup><article  id="copy-on-modify">
+
+<ul>
+<li>R implements these mechanics using a copy on modify mechanic.
+
+<ul>
+<li>Also how Clojure works</li>
+</ul></li>
+<li>Reduces unecessary copying (especially since a function like sum doesn’t actually need to change the data)</li>
+<li>When code tries to change something, then copy is made</li>
+<li>How does this work?</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>NAMED / Reference Counting</h2></hgroup><article  id="named-reference-counting">
+
+<ul>
+<li>R uses a technique called Reference Counting, implemented using the NAMED family macros</li>
+</ul>
+
+<pre class = 'prettyprint lang-c'># r source: eval.c
+
+PROTECT(vl = R_shallow_duplicate_attr(vl));
+defineVar(symbol, vl, rho);
+INCREMENT_NAMED(vl);
+UNPROTECT(1);</pre>
+
+</article></slide><slide class=""><hgroup><h2>How does NAMED work?</h2></hgroup><article  id="how-does-named-work">
+
+<ul>
+<li>Let’s have a look at some inteRnals, the addres and NAMED Count</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>a = c(1,2,3)
+.Internal(inspect(a))</pre>
+
+<pre >  ## @556c56effe78 14 REALSXP g0c3 [NAM(1)] (len=3, tl=0) 1,2,3</pre>
+
+<ul>
+<li>The <span class="cite">@blah</span> is the memory address and the NAM(#) represents the number of representations</li>
+<li>We’re gonna use Hadley’s <code>pryr</code> package since it’s nicer</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>library(pryr)
+c(address(a), refs(a))</pre>
+
+<pre >  ## &quot;0x556c56effe78&quot;, 1
+</pre>
+
+<ul>
+<li>Note: running the above syntax inside Rstudio/knitr will actually give you a different answer.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>How does NAMED work?</h2></hgroup><article  id="how-does-named-work-1">
+
+<ul>
+<li>when we make a copy <code>b=a</code>, these act as pointers and point at the same underlying data</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>a = c(1,2,3)
+b = a
+c(address(a), address(b))</pre>
+
+<pre >  ## &quot;0x556c5795b860&quot; &quot;0x556c5795b860&quot;
+</pre>
+
+<ul>
+<li>the named counter is incremented. R now knows that the data is being referenced from 2 locations</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>c(refs(a), refs(b))</pre>
+
+<pre >  ## 2 2 </pre>
+
+</article></slide><slide class=""><hgroup><h2>How does NAMED work?</h2></hgroup><article  id="how-does-named-work-2">
+
+<ul>
+<li>copy on modify means that when NAM is 1, there are no other references and the data is safe to mutate</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>a = c(1,2,3)
+c(address(a), refs(a))</pre>
+
+<pre >  ## &quot;0x556c5795b590&quot; &quot;1&quot; </pre>
+
+<pre class = 'prettyprint lang-r'>a[1] = 10
+c(address(a), refs(a))</pre>
+
+<pre >  ## &quot;0x556c5795b590&quot; &quot;1&quot;  </pre>
+
+<ul>
+<li>The address and NAM count is unchanged, though the data has changed</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>How does NAMED work?</h2></hgroup><article  id="how-does-named-work-3">
+
+<ul>
+<li>What happens when the name count is 2</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>a = c(1,2,3)
+b = a
+c(address(a), refs(a))</pre>
+
+<pre >  ## &quot;0x556c57977e40&quot; &quot;2&quot; </pre>
+
+<pre class = 'prettyprint lang-r'># mutate
+a[1] = 10
+c(address(a), refs(a))</pre>
+
+<pre >  ## &quot;0x556c57977d20&quot; &quot;1&quot;  </pre>
+
+<ul>
+<li>a is now in a new memory location with NAM set to 1</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>How does NAMED work?</h2></hgroup><article  id="how-does-named-work-4">
+
+<pre class = 'prettyprint lang-r'>c(address(b), refs(b))</pre>
+
+<pre >  ##  &quot;0x556c57977e40&quot; &quot;2&quot;</pre>
+
+<ul>
+<li>While b points to the original data and it’s NAM count is still 2</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>How does NAMED work?</h2></hgroup><article  id="how-does-named-work-5">
+
+<ul>
+<li>NAMED counts are either 1 or &gt;1,</li>
+<li>Once a NAMED count &gt;1 it can never return to 1 again (implementation quirk)</li>
+<li>This means in a situation like this, b now has a NAM count of 2 despite only b pointing at it!</li>
+<li>We now require the garbage collector to save us!</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>a = c(1,2,3)
+b = a
+c = a
+refs(a)</pre>
+
+<pre >  ## 2</pre>
+
+</article></slide><slide class=""><hgroup><h2>Reference Counting</h2></hgroup><article  id="reference-counting">
+
+<ul>
+<li>This is a huge issue with R, especially with giant vectors.</li>
+<li>Proper Reference Counting, where we increment and decrement a counter is implemented in R (you can compile a version yourself by changing a <code>#define</code>)
+
+<ul>
+<li>It’s designed as drop in replacement for the NAMED macros but decrementing NAMED counters was not common practice so performance is not improved</li>
+</ul></li>
+<li>Python has an excellent Reference Counting implementation that R core seems to be moving towards.</li>
+<li>Reference Counting is a big part of why Python and R struggle with multiprocessing (think of two threads incrementing and decrementing correctly) but ref counting is very common in most dynamic languages</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Memory and Function Calls</h2></hgroup><article  id="memory-and-function-calls">
+
+<pre class = 'prettyprint lang-r'>a = c(1,2,3)
+first = function(obj) {obj[1]}
+m = first(a)
+refs(a)</pre>
+
+<pre >  ## 2</pre>
+
+<pre class = 'prettyprint lang-r'>a = c(1,2,3)
+m = sum(a)
+refs(a)</pre>
+
+<pre >  ## 1</pre>
+
+<ul>
+<li>the function needs a reference so it gets one</li>
+<li>But sum doesn’t? sum is a primitive function (read C), hence it doesn’t need a reference</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Memory and Lists</h2></hgroup><article  id="memory-and-lists">
+
+<pre class = 'prettyprint lang-r'>&gt; a = c(1,2,3)
+&gt; b = c(2,3,4)
+&gt; lst = list(a, b)
+&gt; .Internal(inspect(lst))
+@556c57145398 19 VECSXP g0c2 [NAM(1)] (len=2, tl=0)
+  @556c57a637b0 14 REALSXP g0c3 [NAM(2)] (len=3, tl=0) 1,2,3
+  @556c57a5fc40 14 REALSXP g0c3 [NAM(2)] (len=3, tl=0) 2,3,4</pre>
+
+</article></slide><slide class=""><hgroup><h2>Memory And Lists</h2></hgroup><article  id="memory-and-lists-1">
+
+<ul>
+<li>mutate by adding</li>
+</ul>
+
+<pre >&gt; lst[[3]] = c(3,4,5)
+&gt; .Internal(inspect(lst))
+@556c57fce9d8 19 VECSXP g0c3 [NAM(1)] (len=3, tl=0)
+  @556c57a637b0 14 REALSXP g0c3 [NAM(2)] (len=3, tl=0) 1,2,3
+  @556c57a5fc40 14 REALSXP g0c3 [NAM(2)] (len=3, tl=0) 2,3,4
+  @556c57fcea20 14 REALSXP g0c3 [NAM(1)] (len=3, tl=0) 3,4,5
+</pre>
+
+<ul>
+<li>brand new list with references copied over</li>
+<li>since list has <code>NAM(1)</code>, why wasn’t it mutated?</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Memory And Lists</h2></hgroup><article  id="memory-and-lists-2">
+
+<ul>
+<li>mutate by changing</li>
+</ul>
+
+<pre >&gt; lst[[1]] = &quot;hello&quot;
+&gt; .Internal(inspect(lst))
+@556c57fce9d8 19 VECSXP g0c3 [NAM(1)] (len=3, tl=0)
+  @556c57fcbe98 16 STRSXP g0c1 [NAM(2)] (len=1, tl=0)
+    @556c57fcbef8 09 CHARSXP g0c1 [gp=0x60] [ASCII] [cached] &quot;hello&quot;
+  @556c57a5fc40 14 REALSXP g0c3 [NAM(2)] (len=3, tl=0) 2,3,4
+  @556c57fcea20 14 REALSXP g0c3 [NAM(1)] (len=3, tl=0) 3,4,5</pre>
+
+<ul>
+<li>why was list mutated this time?</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Memory And Lists</h2></hgroup><article  id="memory-and-lists-3">
+
+<ul>
+<li>Adding and Dropping keys cause a new list to be made with references copied over
+
+<ul>
+<li>Loops in for lists are slow when not pre-allocated!</li>
+</ul></li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>lst = list()
+for (i in 1:5){
+  lst[[i]] = i;
+  cat(address(lst), &quot;\n&quot;)
+}</pre>
+
+<pre >## 0x560f039a83f8 
+## 0x560f03bb14b0 
+## 0x560f03cb28e8 
+## 0x560f03cb2a08 
+## 0x560f03cbcd38</pre>
+
+</article></slide><slide class=""><hgroup><h2>Memory And Lists</h2></hgroup><article  id="memory-and-lists-4">
+
+<ul>
+<li>Changing entry for an existing key will do a mutation in place</li>
+<li>One of the many reasons <code>apply</code> is faster - pre-allocated output ready to be mutated.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>lst = vector(&quot;list&quot;, 5)
+for (i in 1:5){
+  lst[[i]] = i;
+  cat(address(lst), &quot;\n&quot;)
+}</pre>
+
+<pre >## 0x560f03b88b40 
+## 0x560f03b88b40 
+## 0x560f03b88b40 
+## 0x560f03b88b40 
+## 0x560f03b88b40</pre>
+
+</article></slide><slide class=""><hgroup><h2>Memory and Data Frames</h2></hgroup><article  id="memory-and-data-frames">
+
+<pre class = 'prettyprint lang-r'>&gt; tb = data.frame(a=a, b=b)
+&gt; .Internal(inspect(tb))
+@28672c8 19 VECSXP g0c2 [OBJ,NAM(2),ATT] (len=2, tl=0)
+  @2898378 14 REALSXP g0c3 [NAM(2)] (len=3, tl=0) 2,2,3
+  @2157408 14 REALSXP g0c3 [NAM(2)] (len=3, tl=0) 2,2,3
+ATTRIB:
+  @2e2bbb0 02 LISTSXP g0c0 []
+  ... # there is a lot of random stuff in this </pre>
+
+<ul>
+<li>Basically the same as lists, however even modifications result in a new dataframe being created.</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Final Twist</h2></hgroup><article  id="final-twist">
+
+<pre class = 'prettyprint lang-r'>library(Rcpp)
+cppFunction(&#39;
+   void doubC(NumericVector x) {
+   int n = x.size();
+   for(int i = 0; i &lt; n; ++i) {
+     x[i] = x[i]*2;
+   }
+ }
+&#39;)</pre>
+
+<pre class = 'prettyprint lang-r'>doubC = function(x) &quot;please fix&quot;</pre>
+
+</article></slide><slide class=""><hgroup><h2>Final Twist</h2></hgroup><article  id="final-twist-1">
+
+<pre class = 'prettyprint lang-r'>a = c(1,2,3)
+b = a
+doubC(a)</pre>
+
+<pre >## [1] &quot;please fix&quot;</pre>
+
+<pre class = 'prettyprint lang-r'>b</pre>
+
+<pre >## [1] 1 2 3</pre>
+
+<ul>
+<li>Only Pure R follows the copy on modify semantics</li>
+<li>C functions access underlying data and can modify in place.
+
+<ul>
+<li>Good for performance, but can introduce bugs!</li>
+</ul></li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Lexical Scoping -&gt; Closures</h2></hgroup><article  id="lexical-scoping---closures">
+
+</article></slide><slide class=""><hgroup><h2>Dynamic Scoping</h2></hgroup><article  id="dynamic-scoping">
+
+<ul>
+<li>Scoping refers to how a language looks up variables.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>a  = 3
+test = function() a
+test()</pre>
+
+<pre >## [1] 3</pre>
+
+<pre class = 'prettyprint lang-r'>a = 4
+test()</pre>
+
+<pre >## [1] 4</pre>
+
+<ul>
+<li>Each time the function <code>test</code> is run, it looks up what <code>a</code> is to return it. As the value changes, the value of <code>test()</code> changes too</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Lexical Scoping</h2></hgroup><article  id="lexical-scoping">
+
+<pre class = 'prettyprint lang-r'>a = 5
+b = 1
+f = function(x) a * x + b
+f(10)</pre>
+
+<pre >## [1] 51</pre>
+
+<pre class = 'prettyprint lang-r'>g = function(x){
+  a = 1
+  b = 5
+  f(x)
+}</pre>
+
+<ul>
+<li>Does <code>g(10) = 51</code> or does <code>g(10) = 15</code>?</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Lexical Scoping</h2></hgroup><article  id="lexical-scoping-1">
+
+<pre class = 'prettyprint lang-r'>g(10)</pre>
+
+<pre >## [1] 51</pre>
+
+<ul>
+<li>S would have returned 15.<br/></li>
+<li>The function <code>f</code> has been bound to the environment where <code>a=1,b=5</code></li>
+<li>Functions are bound to data -&gt; Closure</li>
+<li>Normally seen in functions returning functions (since top level tends to be very mutable)</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Example</h2></hgroup><article  id="example">
+
+<pre class = 'prettyprint lang-r'>newtons = function(func, deriv){
+  function(x) x - func(x)/deriv(x)
+}
+func = function(x) x^2 - 10
+deriv = function(x) 2 * x
+solver = newtons(func, deriv)
+init = 6
+g1 = solver(init)
+g1</pre>
+
+<pre >## [1] 3.833333</pre>
+
+<pre class = 'prettyprint lang-r'>solver(g1)</pre>
+
+<pre >## [1] 3.221014</pre>
+
+<ul>
+<li>super handy when doing MCMCs</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Lexical Scoping Conclusions</h2></hgroup><article  id="lexical-scoping-conclusions">
+
+<ul>
+<li>Why
+
+<ul>
+<li>Closures are good alternative to OO for organising code</li>
+<li>Side effect free - resolution order is always local!</li>
+</ul></li>
+<li>Why not
+
+<ul>
+<li>More programming resources required to hold all this state</li>
+</ul></li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Aside: Environments</h2></hgroup><article  id="aside-environments">
+
+<ul>
+<li>R achieves this with the concept of environments.</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>search()</pre>
+
+<pre >##  [1] &quot;.GlobalEnv&quot;        &quot;package:pryr&quot;      &quot;package:stats&quot;    
+##  [4] &quot;package:graphics&quot;  &quot;package:grDevices&quot; &quot;package:utils&quot;    
+##  [7] &quot;package:datasets&quot;  &quot;package:methods&quot;   &quot;Autoloads&quot;        
+## [10] &quot;package:base&quot;</pre>
+
+<ul>
+<li>these are the top level environments (also in RStudio)</li>
+<li>pipes (<code>magrittr</code>) abuses these environments heavily to work</li>
+<li><code>.GlobalEnv</code> is what we consider our default namespace</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Aside: Environments</h2></hgroup><article  id="aside-environments-1">
+
+<ul>
+<li>Environments have a hierarchy, each function from 1pryr1 is defined in that environemnt, and the environments of those functions are linked to the parent one one</li>
+<li>This is how variable lookup works and names avoid conflict.
+
+<ul>
+<li>For example, referencing <code>a</code> will check in it’s own own environment and keep stepping up until it reaches top level.</li>
+</ul></li>
+<li>Hence package environments don’t interfere unless explicitly exported into a namespace</li>
+<li>doing <code>rm(name)</code> will remove <code>name</code> from global namespace and allow to search in the packages namespace again (in case you mask something)</li>
+</ul>
+
+</article></slide><slide class="segue dark nobackground level1"><hgroup class = 'auto-fadein'><h2>Lazy Evaluation</h2></hgroup><article  id="lazy-evaluation">
+
+</article></slide><slide class=""><hgroup><h2>What is Lazy Evaluation</h2></hgroup><article  id="what-is-lazy-evaluation">
+
+<ul>
+<li>Languages like haskell don’t do any evaluation until the last possible moment.</li>
+</ul>
+
+<pre class = 'prettyprint lang-haskell'>infList =  [1,3,...]
+first infList # 1
+take 30 infList # keeps evaluating until we get 30 items
+last infList # gets stuck since last of such a list doesn&#39;t exist</pre>
+
+<ul>
+<li>R’s lazy evaluation is seen commonly in functional arguments</li>
+</ul>
+
+<pre class = 'prettyprint lang-r'>lm(pollution~gdp, data=OECD)
+df %&gt;% select(gdp &gt; 100)</pre></article></slide>
 
 
   <slide class="backdrop"></slide>

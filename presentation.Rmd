@@ -239,6 +239,435 @@ Is R:
 
 ## Copy on Modify
 
-- R implements these mechanics 
+- R implements these mechanics using a copy on modify mechanic. 
+  - Also how Clojure works
+- Reduces unecessary copying (especially since a function like sum doesn't actually need to change the data)
+- When code tries to change something, then copy is made
+- How does this work?
+
+## NAMED / Reference Counting
+
+- R uses a technique called Reference Counting, implemented using the NAMED family macros
+
+```c
+# r source: eval.c
+
+PROTECT(vl = R_shallow_duplicate_attr(vl));
+defineVar(symbol, vl, rho);
+INCREMENT_NAMED(vl);
+UNPROTECT(1);
+```
 
 
+## How does NAMED work?
+
+- Let's have a look at some inteRnals, the addres and NAMED Count
+
+```r
+a = c(1,2,3)
+.Internal(inspect(a))
+```
+
+```
+  ## @556c56effe78 14 REALSXP g0c3 [NAM(1)] (len=3, tl=0) 1,2,3
+```
+
+- The @blah is the memory address and the NAM(#) represents the number of representations
+- We're gonna use Hadley's `pryr` package since it's nicer
+
+```r
+library(pryr)
+c(address(a), refs(a))
+```
+
+```
+  ## "0x556c56effe78", 1
+
+```
+
+- Note: running the above syntax inside Rstudio/knitr will actually give you a different answer. 
+
+
+
+
+## How does NAMED work?
+
+- when we make a copy `b=a`, these act as pointers and point at the same underlying data
+
+```r
+a = c(1,2,3)
+b = a
+c(address(a), address(b))
+```
+
+```
+  ## "0x556c5795b860" "0x556c5795b860"
+
+```
+
+- the named counter is incremented. R now knows that the data is being referenced from 2 locations
+
+```r
+c(refs(a), refs(b))
+```
+
+```
+  ## 2 2 
+```
+
+## How does NAMED work?
+
+- copy on modify means that when NAM is 1, there are no other references and the data is safe to mutate
+
+```r
+a = c(1,2,3)
+c(address(a), refs(a))
+```
+
+```
+  ## "0x556c5795b590" "1" 
+```
+
+
+```r
+a[1] = 10
+c(address(a), refs(a))
+```
+
+```
+  ## "0x556c5795b590" "1"  
+```
+
+- The address and NAM count is unchanged, though the data has changed
+
+
+## How does NAMED work?
+
+- What happens when the name count is 2
+
+```r
+a = c(1,2,3)
+b = a
+c(address(a), refs(a))
+```
+
+```
+  ## "0x556c57977e40" "2" 
+```
+
+
+```r
+# mutate
+a[1] = 10
+c(address(a), refs(a))
+```
+
+```
+  ## "0x556c57977d20" "1"  
+```
+- a is now in a new memory location with NAM set to 1
+
+
+## How does NAMED work?
+
+```r
+c(address(b), refs(b))
+```
+
+```
+  ##  "0x556c57977e40" "2"
+```
+- While b points to the original data and it's NAM count is still 2
+
+## How does NAMED work?
+
+- NAMED counts are either 1 or >1, 
+- Once a NAMED count >1 it can never return to 1 again (implementation quirk)
+- This means in a situation like this, b now has a NAM count of 2 despite only b pointing at it!
+- We now require the garbage collector to save us!
+
+```r
+a = c(1,2,3)
+b = a
+c = a
+refs(a)
+```
+
+```
+  ## 2
+```
+
+## Reference Counting
+
+- This is a huge issue with R, especially with giant vectors.
+- Proper Reference Counting, where we increment and decrement a counter is implemented in R (you can compile a version yourself by changing a `#define`) 
+  - It's designed as drop in replacement for the NAMED macros but
+  decrementing NAMED counters was not common practice so performance is not improved
+- Python has an excellent Reference Counting implementation that R core seems to be moving towards.
+- Reference Counting is a big part of why Python and R struggle with multiprocessing (think of two threads incrementing and decrementing correctly) but ref counting is very common in most dynamic languages
+
+## Memory and Function Calls
+
+```R
+a = c(1,2,3)
+first = function(obj) {obj[1]}
+m = first(a)
+refs(a)
+```
+
+```
+  ## 2
+```
+
+
+```R
+a = c(1,2,3)
+m = sum(a)
+refs(a)
+```
+
+```
+  ## 1
+```
+- the function needs a reference so it gets one
+- But sum doesn't? sum is a primitive function (read C), hence it doesn't need a reference
+
+
+## Memory and Lists
+
+```R
+> a = c(1,2,3)
+> b = c(2,3,4)
+> lst = list(a, b)
+> .Internal(inspect(lst))
+@556c57145398 19 VECSXP g0c2 [NAM(1)] (len=2, tl=0)
+  @556c57a637b0 14 REALSXP g0c3 [NAM(2)] (len=3, tl=0) 1,2,3
+  @556c57a5fc40 14 REALSXP g0c3 [NAM(2)] (len=3, tl=0) 2,3,4
+```
+
+## Memory And Lists
+
+- mutate by adding 
+```
+> lst[[3]] = c(3,4,5)
+> .Internal(inspect(lst))
+@556c57fce9d8 19 VECSXP g0c3 [NAM(1)] (len=3, tl=0)
+  @556c57a637b0 14 REALSXP g0c3 [NAM(2)] (len=3, tl=0) 1,2,3
+  @556c57a5fc40 14 REALSXP g0c3 [NAM(2)] (len=3, tl=0) 2,3,4
+  @556c57fcea20 14 REALSXP g0c3 [NAM(1)] (len=3, tl=0) 3,4,5
+
+```
+- brand new list with references copied over
+- since list has `NAM(1)`, why wasn't it mutated?
+
+## Memory And Lists
+
+- mutate by changing
+```
+> lst[[1]] = "hello"
+> .Internal(inspect(lst))
+@556c57fce9d8 19 VECSXP g0c3 [NAM(1)] (len=3, tl=0)
+  @556c57fcbe98 16 STRSXP g0c1 [NAM(2)] (len=1, tl=0)
+    @556c57fcbef8 09 CHARSXP g0c1 [gp=0x60] [ASCII] [cached] "hello"
+  @556c57a5fc40 14 REALSXP g0c3 [NAM(2)] (len=3, tl=0) 2,3,4
+  @556c57fcea20 14 REALSXP g0c3 [NAM(1)] (len=3, tl=0) 3,4,5
+```
+- why was list mutated this time?
+
+## Memory And Lists
+
+- Adding and Dropping keys cause a new list to be made with references copied over
+  - Loops in for lists are slow when not pre-allocated!
+
+```{r}
+lst = list()
+for (i in 1:5){
+  lst[[i]] = i;
+  cat(address(lst), "\n")
+}
+```
+
+## Memory And Lists
+
+- Changing entry for an existing key will do a mutation in place
+- One of the many reasons `apply` is faster - pre-allocated output ready to be mutated.
+
+```{r}
+lst = vector("list", 5)
+for (i in 1:5){
+  lst[[i]] = i;
+  cat(address(lst), "\n")
+}
+```
+
+## Memory and Data Frames
+
+```R
+> tb = data.frame(a=a, b=b)
+> .Internal(inspect(tb))
+@28672c8 19 VECSXP g0c2 [OBJ,NAM(2),ATT] (len=2, tl=0)
+  @2898378 14 REALSXP g0c3 [NAM(2)] (len=3, tl=0) 2,2,3
+  @2157408 14 REALSXP g0c3 [NAM(2)] (len=3, tl=0) 2,2,3
+ATTRIB:
+  @2e2bbb0 02 LISTSXP g0c0 []
+  ... # there is a lot of random stuff in this 
+```
+- Basically the same as lists, however even modifications result in a new dataframe being created.
+
+## Final Twist
+
+```r
+library(Rcpp)
+cppFunction('
+   void doubC(NumericVector x) {
+   int n = x.size();
+   for(int i = 0; i < n; ++i) {
+     x[i] = x[i]*2;
+   }
+ }
+')
+```
+
+```{r}
+doubC = function(x) "please fix"
+```
+
+
+## Final Twist
+
+```{r}
+a = c(1,2,3)
+b = a
+doubC(a)
+b
+```
+
+- Only Pure R follows the copy on modify semantics
+- C functions access underlying data and can modify in place. 
+  - Good for performance, but can introduce bugs!
+  
+# Lexical Scoping -> Closures
+
+## Dynamic Scoping 
+
+- Scoping refers to how a language looks up variables.
+```{r}
+a  = 3
+test = function() a
+test()
+```
+
+```{r}
+a = 4
+test()
+```
+- Each time the function `test` is run, it looks up what `a` is to return it. As the value changes, the value of `test()` changes too
+
+
+## Lexical Scoping 
+
+```{r}
+a = 5
+b = 1
+f = function(x) a * x + b
+f(10)
+```
+```{r}
+g = function(x){
+  a = 1
+  b = 5
+  f(x)
+}
+```
+- Does `g(10) = 51` or does `g(10) = 15`?
+
+## Lexical Scoping 
+
+```{r}
+g(10)
+```
+
+- S would have returned 15.  
+- The function `f` has been bound to the environment where `a=1,b=5`
+- Functions are bound to data -> Closure
+- Normally seen in functions returning functions (since top level tends to be very mutable)
+
+## Example
+
+```{r}
+newtons = function(func, deriv){
+  function(x) x - func(x)/deriv(x)
+}
+func = function(x) x^2 - 10
+deriv = function(x) 2 * x
+solver = newtons(func, deriv)
+init = 6
+g1 = solver(init)
+g1
+```
+
+```{r}
+solver(g1)
+```
+- super handy when doing MCMCs
+
+## Lexical Scoping Conclusions
+
+- Why
+  - Closures are good alternative to OO for organising code
+  - Side effect free - resolution order is always local!
+- Why not
+  - More programming resources required to hold all this state
+
+## Aside: Environments
+
+- R achieves this with the concept of environments.
+```{r}
+search()
+```
+- these are the top level environments (also in RStudio)
+- pipes (`magrittr`) abuses these environments heavily to work
+- `.GlobalEnv` is what we consider our default namespace
+
+## Aside: Environments
+
+- Environments have a hierarchy, each function from 1pryr1 is defined in that environemnt, and the environments of those functions are linked to the parent one one
+- This is how variable lookup works and names avoid conflict.
+  - For example, referencing `a` will check in it's own own environment and keep stepping up until it reaches top level.
+- Hence package environments don't interfere unless explicitly exported into a namespace
+- doing `rm(name)` will remove `name` from global namespace and allow to search in the packages namespace again (in case you mask something)
+
+# Lazy Evaluation
+
+## What is Lazy Evaluation
+
+- Languages like haskell don't do any evaluation until the last possible moment.
+```haskell
+infList =  [1,3,...]
+first infList # 1
+take 30 infList # keeps evaluating until we get 30 items
+last infList # gets stuck since last of such a list doesn't exist
+```
+- R's lazy evaluation is seen commonly in function arguments
+```r
+lm(pollution~gdp, data=OECD)
+OECD %>% select(gdp > 100)
+```
+- but `gdp` doesn't exist! Typing `gdp` would get you an error, while the columns exist in the dataframe
+
+## Lazy Evaluation
+
+```{r}
+gdp
+```
+
+```{r}
+test = function(a, b){
+  a
+}
+test(50, gdp* 4 / 0)
+```
+
+- R's lazy evaluation means that the function arguments are not evaluated before the function gets them
+- This is very non-standard but allows Hadley et al to rewrite the language as they see fit (combined with environment knowledge)
+- I don't think any other languages allow this, but it's very user friendly
