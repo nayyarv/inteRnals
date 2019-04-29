@@ -448,7 +448,7 @@ refs(a)
 ## Memory And Lists
 
 - mutate by adding 
-```
+```r
 > lst[[3]] = c(3,4,5)
 > .Internal(inspect(lst))
 @556c57fce9d8 19 VECSXP g0c3 [NAM(1)] (len=3, tl=0)
@@ -463,7 +463,7 @@ refs(a)
 ## Memory And Lists
 
 - mutate by changing
-```
+```r
 > lst[[1]] = "hello"
 > .Internal(inspect(lst))
 @556c57fce9d8 19 VECSXP g0c3 [NAM(1)] (len=3, tl=0)
@@ -657,17 +657,21 @@ OECD %>% select(gdp > 100)
 
 ## Lazy Evaluation
 
-```{r}
+```r
 gdp
+```
+```
+  ## Error: object 'gdp' not found
+
 ```
 
 ```{r}
 test = function(a, b){
   a
 }
-test(50, gdp* 4 / 0)
+test(50, gdp* "hi")
 ```
 
 - R's lazy evaluation means that the function arguments are not evaluated before the function gets them
 - This is very non-standard but allows Hadley et al to rewrite the language as they see fit (combined with environment knowledge)
-- I don't think any other languages allow this, but it's very user friendly
+

@@ -55,3 +55,11 @@ addToGlobal("herpyderp")
 
 herpyderp
 
+
+## substitute magic
+
+subquot = function(arg){
+  substitute(arg)
+}
+
+subquot('new' & 3)

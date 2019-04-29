@@ -3655,11 +3655,11 @@ for (i in 1:5){
   cat(address(lst), &quot;\n&quot;)
 }</pre>
 
-<pre >## 0x560f039a83f8 
-## 0x560f03bb14b0 
-## 0x560f03cb28e8 
-## 0x560f03cb2a08 
-## 0x560f03cbcd38</pre>
+<pre >## 0x555d0353ed68 
+## 0x555d03850230 
+## 0x555d036ff118 
+## 0x555d036ff1a8 
+## 0x555d0383def0</pre>
 
 </article></slide><slide class=""><hgroup><h2>Memory And Lists</h2></hgroup><article  id="memory-and-lists-4">
 
@@ -3674,11 +3674,11 @@ for (i in 1:5){
   cat(address(lst), &quot;\n&quot;)
 }</pre>
 
-<pre >## 0x560f03b88b40 
-## 0x560f03b88b40 
-## 0x560f03b88b40 
-## 0x560f03b88b40 
-## 0x560f03b88b40</pre>
+<pre >## 0x555d03724c20 
+## 0x555d03724c20 
+## 0x555d03724c20 
+## 0x555d03724c20 
+## 0x555d03724c20</pre>
 
 </article></slide><slide class=""><hgroup><h2>Memory and Data Frames</h2></hgroup><article  id="memory-and-data-frames">
 
@@ -3869,11 +3869,34 @@ take 30 infList # keeps evaluating until we get 30 items
 last infList # gets stuck since last of such a list doesn&#39;t exist</pre>
 
 <ul>
-<li>R’s lazy evaluation is seen commonly in functional arguments</li>
+<li>R’s lazy evaluation is seen commonly in function arguments</li>
 </ul>
 
 <pre class = 'prettyprint lang-r'>lm(pollution~gdp, data=OECD)
-df %&gt;% select(gdp &gt; 100)</pre></article></slide>
+OECD %&gt;% select(gdp &gt; 100)</pre>
+
+<ul>
+<li>but <code>gdp</code> doesn’t exist! Typing <code>gdp</code> would get you an error, while the columns exist in the dataframe</li>
+</ul>
+
+</article></slide><slide class=""><hgroup><h2>Lazy Evaluation</h2></hgroup><article  id="lazy-evaluation-1">
+
+<pre class = 'prettyprint lang-r'>gdp</pre>
+
+<pre >  ## Error: object &#39;gdp&#39; not found
+</pre>
+
+<pre class = 'prettyprint lang-r'>test = function(a, b){
+  a
+}
+test(50, gdp* &quot;hi&quot;)</pre>
+
+<pre >## [1] 50</pre>
+
+<ul>
+<li>R’s lazy evaluation means that the function arguments are not evaluated before the function gets them</li>
+<li>This is very non-standard but allows Hadley et al to rewrite the language as they see fit (combined with environment knowledge)</li>
+</ul></article></slide>
 
 
   <slide class="backdrop"></slide>
