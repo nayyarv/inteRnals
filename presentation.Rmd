@@ -9,6 +9,8 @@ output: ioslides_presentation
 knitr::opts_chunk$set(echo = TRUE)
 requireNamespace("tibble")
 library(pryr)
+library(tidyverse)
+library(rlang)
 ```
 
 ## My Programming History
@@ -20,8 +22,13 @@ library(pryr)
   - mostly tiny uni datasets, never ran into problems
   - I am so glad it's better today.
   
+
+## What tidyverse?
+
+![](memes/bane.jpg)
+
   
-## My Programming History
+## My Programming History (2)
 - 2013: Started programming in Python while at Cochlear. Fell in love with programming
   - Started to run into performance issues with R. Sessions kept crashing and datasets started getting bigger.
   - Became a Bayesian - now I needed efficiency and started to program a lot more (BUGS anybody)
@@ -39,21 +46,24 @@ library(pryr)
 
 ## What to Expect
 
+ - Unecessary History about R
  - Hadley's Advanced R without Hadley
  - Some Comp Sci theory and terms
  - Some cross language comparisons
- - Mini metaprogramming
- - Harsh comments directed at R's core team.
+ - Way too much information
+ - Mostly useless but interesting
+ - Watch me fumble to build a pipe in R
 
 ## TOC
 
-1. Language
+1. Programming Languages
 2. History of R
-3. R as a Language
-4. Experiments in R (merge with above)
-    - Lazy Eval and Quosures
-    - Environments and Closures
-    - Infix operators
+3. The R Language
+  - Memory and Reference Counting
+  - Lexical Scoping and Closures
+  - Lazy Evaluation and basic metaprogramming
+4. Building a Pipe
+5. Conclusion
 
 # Programming Languages
 
@@ -169,12 +179,6 @@ tibble::as_tibble(attributes(total))
 - Java and C++ have also taken on a lot of functional features
 - Most popular pure functional languages are primarily academic curiosity
 
-# insert line graph of varying functional/imperativeness
-
-haskell on functional, Java on imperative
-Python closer to imperative
-R middle
-Julia closer to functional
 
 # History of R
 
@@ -220,16 +224,11 @@ factorial <- function(n)
 
 ## The R language
 
-  - Basic Types
   - R and memory (pass by value and GC)
   - Lexical Scoping and closures
-  - Lazy Evaluation
-  - S3 and S4 methods
+  - Lazy Evaluation and promises
   
-## Types
- - Might Remove
- 
- 
+
 ## R and Memory
 
 Is R:
@@ -618,6 +617,8 @@ solver(g1)
   - Side effect free - resolution order is always local!
 - Why not
   - More programming resources required to hold all this state
+  - Not heavily used
+  - Not implemented very efficiently
 
 ## Aside: Environments
 
@@ -631,11 +632,23 @@ search()
 
 ## Aside: Environments
 
-- Environments have a hierarchy, each function from 1pryr1 is defined in that environemnt, and the environments of those functions are linked to the parent one one
+- Environments have a hierarchy, each function from `pryr` is defined in that environemnt, and the environments of those functions are linked to the parent one one
 - This is how variable lookup works and names avoid conflict.
   - For example, referencing `a` will check in it's own own environment and keep stepping up until it reaches top level.
 - Hence package environments don't interfere unless explicitly exported into a namespace
 - doing `rm(name)` will remove `name` from global namespace and allow to search in the packages namespace again (in case you mask something)
+
+## Environmental Magic
+
+```{r}
+a=5
+addToGlobal = function(k, val){
+  fr= parent.frame()
+  assign(k, val, fr)
+}
+addToGlobal("a", 10)
+a
+```
 
 # Lazy Evaluation
 
@@ -682,24 +695,23 @@ test(50, gdp* "hi")
 - arguments must have correct syntax, but not necessarily be valid.
   - i.e. `5 * "Abc"` is ok, but `(1,2)` is not
 - arguments are implicitly evaluated when required.
-- These are called expressions
+- These are called expressions.
 
 
 ## Promised Arguments
 
 ```{r}
-loud = function() {cat("hi", "\n")}
+loud = function() {cat("LOUD", "\n")}
 test = function(a){
   cat("test", "\n")
 }
 test(loud())
 ```
 
-
 ## Promised Arguments (2)
 
 ```{r}
-loud = function() {cat("hi", "\n")}
+loud = function() {cat("LOUD", "\n")}
 test = function(a){
   b = a
   cat("test", "\n")
@@ -707,29 +719,287 @@ test = function(a){
 test(loud())
 ```
 
-## Quoting and Substituting
+## Quoting and Eval
 
+- `quote` parses an expression, but does not evaluate
+```{r}
+a = 2
+b =3
+quote(a+b)
+```
+- `eval` to execute a quote. 
+```{r}
+ex = quote(a * b)
+eval(ex)
+```
+
+## Quoting and Eval
+
+- `eval` executes the expression in an implicit environment, which can be something like a list too
+```{r}
+eval(ex, list(a=10, b=20))
+```
+
+## Substituting
+
+- `substitute` evaluates an expression inside an environment, df, list
+```{r}
+substitute(sum(cty + hwy), head(mpg))
+```
+- Note this doesn't evaluate the above. We pass to `eval`
+```{r}
+eval(substitute(sum(cty + hwy), head(mpg)))
+```
+- This is the most commonly used with formula style functions.
 
 ## tidy functions
 
 Ever tried to do something like this
 
-```{r}
+```{r error=TRUE}
 csel = function(farg, sarg){
   mpg %>% transmute(measure=farg/sarg)
 }
 csel(hwy, cty)
 ```
 
-```{r}
+```{r error=TRUE}
 csel("hwy", "cty")
 ```
 
-But this works
+## tidy functions
+
+But this works?
 
 ```{r}
 mpg %>% transmute(measure=hwy/cty) %>% head
 ```
 
+## Quosures in 30 seconds
 
+- `eval` executes quoted expressions in an environment. But `quote` is independent of environment.
+- Quosures are quoted closures - quoted expressions with lexical scoping.
+- Mostly a convenience, but very useful when working with `...` and nested functions.
+- Additionally `rlang` adds concept of symbols to make it easier to work with strings
+
+## Quosure IRL
+
+```{r}
+csel = function(...){
+  args = rlang::quos(...)
+  mpg %>% transmute(measure=!!args[[1]] / !!args[[2]])
+}
+csel(hwy, cty) %>% head
+```
+
+## Quosure IRL
+
+- `enquo` substitutes the value before quoting
+```{r}
+csel = function(farg, sarg){
+  fir = enquo(farg)
+  snd = enquo(sarg)
+  mpg %>% transmute(measure= !!fir / !!snd )
+}
+csel(hwy, cty) %>% head
+```
+
+# Make a Pipe
+
+## Aside: Infix Notation
+
+- infix notation is what we use to write maths
+```{r}
+1+2
+```
+
+```{r}
+10 * 20
+```
+
+## Aside: Prefix Notation
+
+- We use backticks to make things prefix notation
+```{r}
+`+`(1, 2)
+```
+
+```{r}
+`*`(10, 20)
+```
+
+## Aside: Custom Infix Notation
+
+- R allows custom infix when wrapped in `% %`
+```{r}
+`%add%` = function(a,b) {a+b}
+1 %add% 2
+```
+
+```{r}
+`%>%`(1:5, sum)
+```
+
+## Pipe v1
+
+```{r}
+`%pp%` = function(lhs, rhs){
+  rhs(lhs)
+}
+
+1:5 %pp% sum
+```
+
+Done?
+
+## Pipe v1 
+
+```{r error=TRUE}
+1:5 %pp% sum()
+```
+
+- `sum` is a function, while `sum()` is evaluated. 
+- above is `sum()(1:5)` which doesn't make sense
+- We can't let it be evaluated!
+
+```{r}
+exp = quote(sum())
+as.list(exp)
+```
+
+
+## Pipe v2
+
+```{r}
+`%pp%` = function(lhs, rhs){
+  
+  rh = substitute(rhs)
+  if (is.call(rh)){
+    do.call(as_string(rh[[1]]), list(lhs))
+  } else {
+    return(rhs(lhs))
+  }
+}
+1:5 %pp% sum()
+```
+
+## Pipe v2
+```{r}
+sum(1:5, 9:20)
+```
+```{r}
+1:5 %pp% sum(9:20)
+```
+
+## Pipe v3
+
+```{r}
+`%pp%` = function(lhs, rhs){
+  
+  rh = substitute(rhs)
+  if (is.call(rh)){
+    func = as_string(rh[[1]])
+    if (length(rh) == 1){
+      do.call(func, list(lhs))
+    } else{
+      do.call(func, list(lhs, rh[[-1]]))  
+    }
+  } else {
+    return(rhs(lhs))
+  }
+}
+
+1:5 %pp% sum(9:20)
+```
+
+## Pipe v3
+
+- Still backwards compatible
+```{r}
+1:5 %pp% sum
+1:5 %pp% sum()
+```
+- Can chain! (Left to right, applied recursively)
+```{r}
+1:5 %pp% sum %pp% `+`(32)
+
+```
+
+## Pipe v3
+
+- Effectively recursive implementation
+```{r}
+`%pp%`(`%pp%`(1:5, sum()), `+`(32))
+```
+
+- What about named Args?
+```{r}
+1:5 %pp% sum(na.rm=TRUE)
+```
+
+
+## Pipe v4
+
+```{r}
+exp = quote(sum(na.rm=TRUE))
+as.list(exp)
+```
+
+I'm out!
+
+# Conclusions
+
+## Winter of Discontent - 2010-2012
+
+- Ross Ihaka - [simply start over and build something better](https://xianblog.wordpress.com/2010/09/13/simply-start-over-and-build-something-better/). Ihaka thought R had no future.
+  - [Back to the Future: Lisp as a Base for a
+Statistical Computing System](https://www.stat.auckland.ac.nz/~ihaka/downloads/Compstat-2008.pdf) Even discusses python as a possible alternative!
+- Radford Neal - [Patches to improve R speed by 25% and make more consistent](https://radfordneal.wordpress.com/2010/08/15/two-surpising-things-about-r/)
+  - Has since released pqR which is more performant than GNU R, but diverges on syntax
+- Christian Robert - [R’s not-so-brilliant language and/or interpreter](https://xianblog.wordpress.com/2010/09/08/julien-on-r-shortcomings/). Loves the libraries, dislikes the language
+- [The R Inferno](https://www.burns-stat.com/documents/books/the-r-inferno/) goes into incredible detail on the problems facing R
+
+## Winter of Discontent 2013
+
+![](memes/felipe.png)
+
+![](memes/hadley2.png)
+
+- Hadley was only famous for ggplot at this point
+
+## Light in 2014
+
+- Hadley became a full time R developer with RStudio.  
+- Hadley invited to the R Software Foundation as an Ordinary Fellow (along with many others), guiding the language and it's growth.
+- More openness from the foundation, more regular releases, more accepting of patches
+- RStudio hire knitr creator too. Hire a lot of R talent from universities and have them focus on developing R's capabilities
+- RStudio do the work the R Software Foundation, pumping out hugely important packages that underpin a lot of modern R.
+
+  
+## R Today
+
+![](memes/pooh2.jpg)
+
+## Today
+
+- The R language for all it's flaws, has a solid base in LISP/Scheme and gives developer's the keys to the kingdom. 
+- Python's success in DS is almost certainly related to R's popularity and problems
+  - Common ancestor in LISP and numeric library (numpy) available in late 2008.
+  - Very similar languages, and much better CS fundamentals
+  - Would have likely still been popular given the CS 
+- R still lacks generic and efficient data structures to make all purpose programming easy.
+  - Many parts of the base langauge are still unoptimised
+  
+  
+## R and I
+
+- I still use R, especially when generating reports for less data savvy people.
+- I don't see R as a programming language, more of a tool
+- I still use R often (most of my work with the greens), but as a user not a developer.
+  - I rarely use more than one .R or .Rmd file and rarely reuse R code
+  - Anything long term goes into a different language. `dplyr` syntax doesn't play nicely in functions.
+- R has a very steep learning curve. Most will never reach Advanced R. 
+- Heavily influenced me to head down more functional programming
+
+  
 
