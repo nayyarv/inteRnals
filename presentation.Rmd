@@ -672,6 +672,64 @@ test = function(a, b){
 test(50, gdp* "hi")
 ```
 
-- R's lazy evaluation means that the function arguments are not evaluated before the function gets them
-- This is very non-standard but allows Hadley et al to rewrite the language as they see fit (combined with environment knowledge)
+- R's lazy evaluation means that the function arguments are not evaluated before the function gets them.
+- This is very non-standard but allows Hadley et al to rewrite the language as they see fit (combined with environment magic).
+
+
+## Promised Arguments
+
+- the arguments are wrapped in a promise that are only evaluated when necessary
+- arguments must have correct syntax, but not necessarily be valid.
+  - i.e. `5 * "Abc"` is ok, but `(1,2)` is not
+- arguments are implicitly evaluated when required.
+- These are called expressions
+
+
+## Promised Arguments
+
+```{r}
+loud = function() {cat("hi", "\n")}
+test = function(a){
+  cat("test", "\n")
+}
+test(loud())
+```
+
+
+## Promised Arguments (2)
+
+```{r}
+loud = function() {cat("hi", "\n")}
+test = function(a){
+  b = a
+  cat("test", "\n")
+}
+test(loud())
+```
+
+## Quoting and Substituting
+
+
+## tidy functions
+
+Ever tried to do something like this
+
+```{r}
+csel = function(farg, sarg){
+  mpg %>% transmute(measure=farg/sarg)
+}
+csel(hwy, cty)
+```
+
+```{r}
+csel("hwy", "cty")
+```
+
+But this works
+
+```{r}
+mpg %>% transmute(measure=hwy/cty) %>% head
+```
+
+
 
