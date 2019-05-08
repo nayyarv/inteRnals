@@ -20,8 +20,6 @@ library(rlang)
   - before the tidyverse
   - used knitr before R markdown (shell script escapes on pdflatex)
   - mostly tiny uni datasets, never ran into problems
-  - I am so glad it's better today.
-  
 
 ## What tidyverse?
 
@@ -29,24 +27,26 @@ library(rlang)
 
   
 ## My Programming History (2)
-- 2013: Started programming in Python while at Cochlear. Fell in love with programming
+- 2013: Started programming in Python while at Cochlear. 
   - Started to run into performance issues with R. Sessions kept crashing and datasets started getting bigger.
   - Became a Bayesian - now I needed efficiency and started to program a lot more (BUGS anybody)
-  - Started to switch to python a lot more.
-- 2014: Returned to comp sci becoming more confident with C, Java. Picked up some Haskell and CUDA too!
+  - Started to switch to python a lot more. Fell in love with programming
+- 2014: Returned to comp sci and became more confident with C, Java. Picked up some Haskell and CUDA too!
 - 2015-2018: Working for HFT, mostly using Python and C++
 - 2018: Used R for census and survey analysis (Parliament)
 - 2019: Using Julia for Speech Recognition and Deep Learning.
 
 ## Informal Survey
 
+- How many years have you been using R?
 - How many languages can you program in besides R?
-- Have you used S3 or S4 methods?
+- Have you used S3 or S4 methods (or Reference classes or R6)?
 - Do you consider yourself a user or a developer?
+- Do you run your code with RScript or mostly interactive?
 
 ## What to Expect
 
- - Unecessary History about R
+ - Unnecessary History about R
  - Hadley's Advanced R without Hadley
  - Some Comp Sci theory and terms
  - Some cross language comparisons
@@ -61,7 +61,7 @@ library(rlang)
 3. The R Language
   - Memory and Reference Counting
   - Lexical Scoping and Closures
-  - Lazy Evaluation and basic metaprogramming
+  - Lazy Evaluation and basic meta-programming
 4. Building a Pipe
 5. Conclusion
 
@@ -81,7 +81,7 @@ library(rlang)
 ## What is a Programming Language?
 
 - Language != Implementation
-- A langauge is a defined in abstract way, usually syntax specifications and behaviour
+- A language is a defined in abstract way, usually syntax specifications and behaviour
 - Languages can grow and evolve, by adding new syntax or new features.
   - Python added the `@` syntax for matrix multiplication
   - Java added the concept of `lambda`s, the ability to pass functions as arguments
@@ -92,7 +92,7 @@ library(rlang)
 
 - R is not formally defined like most programming languages.
 - R is specified by the implementation - GNU R
-  - It is simulataneously loosely defined
+  - It is simultaneously loosely defined
   - And impossible to write a new version (due to implementation specific problems)
 - Other dialects
   - pqR - written by Radford Neal to be more performant, it branches of R 2.15
@@ -101,13 +101,13 @@ library(rlang)
 ## Python as a language
 
 - Spec produced by Python Foundation.
-- Also produce CPython, a reference implemention implemented in C
+- Also produce CPython, a reference implementation implemented in C
   - Has very good interoperability with C, but this is not part of the Python spec, a feature of CPython
 - Other dialects
   - PyPy (Just In Time compiled) - can be very quick, but doesn't play nicely with C extensions (say numpy)
   - Stackless Python - used by EVE online, allows for massive concurrency
   - Jython - compiles to the JVM
-- You also have Cython which is an extension of Python with typing for speed, and RPython which is a limited subset of the langauge.
+- You also have Cython which is an extension of Python with typing for speed, and RPython which is a limited subset of the language.
 
 ## Functional Languages
 
@@ -200,7 +200,7 @@ factorial <- function(n)
 ## History of Scheme
 
 - Scheme is a dialect of Lisp (List Processor) one of the first functional programming languages.
-- Lisp was introduced as a purely mathematical langauge, and Scheme filled in the missing parts to run on a computer.
+- Lisp was introduced as a purely mathematical language, and Scheme filled in the missing parts to run on a computer.
 - Functional languages have become very popular in Software Engineering today for being expressive and Lisp has been incredibly influential despite never finding much success itself.
 - Scheme is a mix of functional and imperative style
 - R, Julia and Python all trace back to Lisp, R via Scheme, Python via Common Lisp, another Lisp dialect
@@ -240,7 +240,7 @@ Is R:
 
 - R implements these mechanics using a copy on modify mechanic. 
   - Also how Clojure works
-- Reduces unecessary copying (especially since a function like sum doesn't actually need to change the data)
+- Reduces unnecessary copying (especially since a function like sum doesn't actually need to change the data)
 - When code tries to change something, then copy is made
 - How does this work?
 
@@ -260,7 +260,7 @@ UNPROTECT(1);
 
 ## How does NAMED work?
 
-- Let's have a look at some inteRnals, the addres and NAMED Count
+- Let's have a look at some inteRnals, the address and NAMED Count
 
 ```r
 a = c(1,2,3)
@@ -515,7 +515,7 @@ ATTRIB:
 
 ## Final Twist
 
-```r
+```{r}
 library(Rcpp)
 cppFunction('
    void doubC(NumericVector x) {
@@ -528,7 +528,10 @@ cppFunction('
 ```
 
 ```{r}
-doubC = function(x) "please fix"
+a = c(1,2,3)
+b = a
+doubC(a)
+b
 ```
 
 
@@ -632,7 +635,7 @@ search()
 
 ## Aside: Environments
 
-- Environments have a hierarchy, each function from `pryr` is defined in that environemnt, and the environments of those functions are linked to the parent one one
+- Environments have a hierarchy, each function from `pryr` is defined in that environment, and the environments of those functions are linked to the parent one one
 - This is how variable lookup works and names avoid conflict.
   - For example, referencing `a` will check in it's own own environment and keep stepping up until it reaches top level.
 - Hence package environments don't interfere unless explicitly exported into a namespace
@@ -654,7 +657,7 @@ a
 
 ## What is Lazy Evaluation
 
-- Languages like haskell don't do any evaluation until the last possible moment.
+- Languages like Haskell don't do any evaluation until the last possible moment.
 ```haskell
 infList =  [1,3,...]
 first infList # 1
@@ -955,8 +958,8 @@ I'm out!
   - [Back to the Future: Lisp as a Base for a
 Statistical Computing System](https://www.stat.auckland.ac.nz/~ihaka/downloads/Compstat-2008.pdf) Even discusses python as a possible alternative!
 - Radford Neal - [Patches to improve R speed by 25% and make more consistent](https://radfordneal.wordpress.com/2010/08/15/two-surpising-things-about-r/)
-  - Has since released pqR which is more performant than GNU R, but diverges on syntax
-- Christian Robert - [R’s not-so-brilliant language and/or interpreter](https://xianblog.wordpress.com/2010/09/08/julien-on-r-shortcomings/). Loves the libraries, dislikes the language
+  - Has since released pqR which is more performant than GNU R, but diverges on syntax in R3
+- Christian Robert - [R’s not-so-brilliant language and/or interpreter](https://xianblog.wordpress.com/2010/09/08/julien-on-r-shortcomings/). Loves the libraries, dislikes the language. "CRAN" deserves a better language.
 - [The R Inferno](https://www.burns-stat.com/documents/books/the-r-inferno/) goes into incredible detail on the problems facing R
 
 ## Winter of Discontent 2013
@@ -967,39 +970,32 @@ Statistical Computing System](https://www.stat.auckland.ac.nz/~ihaka/downloads/C
 
 - Hadley was only famous for ggplot at this point
 
-## Light in 2014
+## Dawn in 2014
 
 - Hadley became a full time R developer with RStudio.  
 - Hadley invited to the R Software Foundation as an Ordinary Fellow (along with many others), guiding the language and it's growth.
 - More openness from the foundation, more regular releases, more accepting of patches
-- RStudio hire knitr creator too. Hire a lot of R talent from universities and have them focus on developing R's capabilities
+- RStudio hire knitr creator too. Hire a lot of R talent from universities and have them focus on developing R's capabilities. 
 - RStudio do the work the R Software Foundation, pumping out hugely important packages that underpin a lot of modern R.
 
-  
+
 ## R Today
 
 ![](memes/pooh2.jpg)
 
+
 ## Today
 
-- The R language for all it's flaws, has a solid base in LISP/Scheme and gives developer's the keys to the kingdom. 
-- Python's success in DS is almost certainly related to R's popularity and problems
-  - Common ancestor in LISP and numeric library (numpy) available in late 2008.
-  - Very similar languages, and much better CS fundamentals
-  - Would have likely still been popular given the CS 
-- R still lacks generic and efficient data structures to make all purpose programming easy.
-  - Many parts of the base langauge are still unoptimised
-  
-  
+- The R language has a solid base in LISP/Scheme and gives developer's the keys to the kingdom. 
+- This is one of the main reasons why R is and always will be relevant. As long as there are package developers, the language is almost infinitely extensible in a way not possible in most languages.
+- Python's popularity in DS owes a lot to R.
+  - Common ancestor in LISP and numeric library (numpy) available in late 2008 made it an obvious alternative. Popularity coincided with the frustration with R
+  - Would have likely still been popular given the CS presence in DS, but DS in 2012 was still Java centric in CS.
+
 ## R and I
 
-- I still use R, especially when generating reports for less data savvy people.
-- I don't see R as a programming language, more of a tool
-- I still use R often (most of my work with the greens), but as a user not a developer.
-  - I rarely use more than one .R or .Rmd file and rarely reuse R code
-  - Anything long term goes into a different language. `dplyr` syntax doesn't play nicely in functions.
-- R has a very steep learning curve. Most will never reach Advanced R. 
-- Heavily influenced me to head down more functional programming
-
-  
+- I still use R quite often, but I don't see it as a programming language any more.
+- Advanced R is a **really** steep learning curve. Even classes seem labyrinthine. 
+- I interact with it primarily as a really convenient stats tool, mostly interactive scripting and markdown reports.
+- R is still not on par with other languages. Testing, CI, deployment is still well behind other languages
 

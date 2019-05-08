@@ -4,6 +4,7 @@
   <title>inteRnals</title>
 
   <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   <meta name="generator" content="pandoc" />
 
@@ -257,6 +258,7 @@ background: black;
 }
 
 slides > slide {
+display: none;
 font-family: 'Open Sans', Arial, sans-serif;
 font-size: 26px;
 color: #797979;
@@ -277,19 +279,17 @@ transition: all 0.6s ease-in-out;
 }
 
 slides > slide.far-past {
+display: none;
 }
 
 slides > slide.past {
+display: block;
 opacity: 0;
 }
 
 slides > slide.current {
 display: block;
 opacity: 1;
-z-index: 1;
-}
-slides > slide:not(.current) {
-z-index: 0;
 }
 
 slides > slide.current .auto-fadein {
@@ -304,11 +304,13 @@ background-size: 100% 100%;
 }
 
 slides > slide.next {
+display: block;
 opacity: 0;
 pointer-events: none;
 }
 
 slides > slide.far-next {
+display: none;
 }
 
 slides > slide.dark {
@@ -380,6 +382,8 @@ width: 1100px;
 
 slides.layout-widescreen > slide.far-past,
 slides.layout-faux-widescreen > slide.far-past {
+display: block;
+display: none;
 -webkit-transform: translate(-2260px);
 -moz-transform: translate(-2260px);
 -ms-transform: translate(-2260px);
@@ -413,6 +417,8 @@ pointer-events: none;
 
 slides.layout-widescreen > slide.far-next,
 slides.layout-faux-widescreen > slide.far-next {
+display: block;
+display: none;
 -webkit-transform: translate(2260px);
 -moz-transform: translate(2260px);
 -ms-transform: translate(2260px);
@@ -1343,13 +1349,6 @@ opacity: 1;
 
 .overview .slide-area {
 display: none;
-}
-slides > slide {
-background: linear-gradient(#ffffff, #ffffff 85%, #e6e6e6);
-background-color: white;
-}
-slides > slide {
-opacity: 0;
 }
 @media print {
 
@@ -3076,10 +3075,6 @@ if (document.readyState !== "loading" &&
       font-style: italic;
     }
 
-    summary {
-      display: list-item;
-    }
-
     slides > slide {
       -webkit-transition: all 0.4s ease-in-out;
       -moz-transition: all 0.4s ease-in-out;
@@ -3095,10 +3090,6 @@ if (document.readyState !== "loading" &&
       transition: opacity 0.6s ease-in 0.4s;
       opacity: 0;
     }
-/* https://github.com/ropensci/plotly/pull/524#issuecomment-468142578 */
-slide:not(.current) .plotly.html-widget{
-  display: block;
-}
 
   </style>
 
@@ -3129,7 +3120,6 @@ slide:not(.current) .plotly.html-widget{
 <li>before the tidyverse</li>
 <li>used knitr before R markdown (shell script escapes on pdflatex)</li>
 <li>mostly tiny uni datasets, never ran into problems</li>
-<li>I am so glad it’s better today.</li>
 </ul></li>
 </ul>
 
@@ -3140,14 +3130,14 @@ slide:not(.current) .plotly.html-widget{
 </article></slide><slide class=""><hgroup><h2>My Programming History (2)</h2></hgroup><article  id="my-programming-history-2">
 
 <ul>
-<li>2013: Started programming in Python while at Cochlear. Fell in love with programming
+<li>2013: Started programming in Python while at Cochlear.
 
 <ul>
 <li>Started to run into performance issues with R. Sessions kept crashing and datasets started getting bigger.</li>
 <li>Became a Bayesian - now I needed efficiency and started to program a lot more (BUGS anybody)</li>
-<li>Started to switch to python a lot more.</li>
+<li>Started to switch to python a lot more. Fell in love with programming</li>
 </ul></li>
-<li>2014: Returned to comp sci becoming more confident with C, Java. Picked up some Haskell and CUDA too!</li>
+<li>2014: Returned to comp sci and became more confident with C, Java. Picked up some Haskell and CUDA too!</li>
 <li>2015-2018: Working for HFT, mostly using Python and C++</li>
 <li>2018: Used R for census and survey analysis (Parliament)</li>
 <li>2019: Using Julia for Speech Recognition and Deep Learning.</li>
@@ -3156,15 +3146,17 @@ slide:not(.current) .plotly.html-widget{
 </article></slide><slide class=""><hgroup><h2>Informal Survey</h2></hgroup><article  id="informal-survey">
 
 <ul>
+<li>How many years have you been using R?</li>
 <li>How many languages can you program in besides R?</li>
-<li>Have you used S3 or S4 methods?</li>
+<li>Have you used S3 or S4 methods (or Reference classes or R6)?</li>
 <li>Do you consider yourself a user or a developer?</li>
+<li>Do you run your code with RScript or mostly interactive?</li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2>What to Expect</h2></hgroup><article  id="what-to-expect">
 
 <ul>
-<li>Unecessary History about R</li>
+<li>Unnecessary History about R</li>
 <li>Hadley’s Advanced R without Hadley</li>
 <li>Some Comp Sci theory and terms</li>
 <li>Some cross language comparisons</li>
@@ -3184,7 +3176,7 @@ slide:not(.current) .plotly.html-widget{
 <ul>
 <li>Memory and Reference Counting</li>
 <li>Lexical Scoping and Closures</li>
-<li>Lazy Evaluation and basic metaprogramming</li>
+<li>Lazy Evaluation and basic meta-programming</li>
 </ul>
 
 <ol>
@@ -3217,7 +3209,7 @@ slide:not(.current) .plotly.html-widget{
 
 <ul>
 <li>Language != Implementation</li>
-<li>A langauge is a defined in abstract way, usually syntax specifications and behaviour</li>
+<li>A language is a defined in abstract way, usually syntax specifications and behaviour</li>
 <li>Languages can grow and evolve, by adding new syntax or new features.
 
 <ul>
@@ -3234,7 +3226,7 @@ slide:not(.current) .plotly.html-widget{
 <li>R is specified by the implementation - GNU R
 
 <ul>
-<li>It is simulataneously loosely defined</li>
+<li>It is simultaneously loosely defined</li>
 <li>And impossible to write a new version (due to implementation specific problems)</li>
 </ul></li>
 <li>Other dialects
@@ -3249,7 +3241,7 @@ slide:not(.current) .plotly.html-widget{
 
 <ul>
 <li>Spec produced by Python Foundation.</li>
-<li>Also produce CPython, a reference implemention implemented in C
+<li>Also produce CPython, a reference implementation implemented in C
 
 <ul>
 <li>Has very good interoperability with C, but this is not part of the Python spec, a feature of CPython</li>
@@ -3261,7 +3253,7 @@ slide:not(.current) .plotly.html-widget{
 <li>Stackless Python - used by EVE online, allows for massive concurrency</li>
 <li>Jython - compiles to the JVM</li>
 </ul></li>
-<li>You also have Cython which is an extension of Python with typing for speed, and RPython which is a limited subset of the langauge.</li>
+<li>You also have Cython which is an extension of Python with typing for speed, and RPython which is a limited subset of the language.</li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2>Functional Languages</h2></hgroup><article  id="functional-languages">
@@ -3376,7 +3368,7 @@ tibble::as_tibble(attributes(total))</pre>
 
 <ul>
 <li>Scheme is a dialect of Lisp (List Processor) one of the first functional programming languages.</li>
-<li>Lisp was introduced as a purely mathematical langauge, and Scheme filled in the missing parts to run on a computer.</li>
+<li>Lisp was introduced as a purely mathematical language, and Scheme filled in the missing parts to run on a computer.</li>
 <li>Functional languages have become very popular in Software Engineering today for being expressive and Lisp has been incredibly influential despite never finding much success itself.</li>
 <li>Scheme is a mix of functional and imperative style</li>
 <li>R, Julia and Python all trace back to Lisp, R via Scheme, Python via Common Lisp, another Lisp dialect</li>
@@ -3424,7 +3416,7 @@ tibble::as_tibble(attributes(total))</pre>
 <ul>
 <li>Also how Clojure works</li>
 </ul></li>
-<li>Reduces unecessary copying (especially since a function like sum doesn’t actually need to change the data)</li>
+<li>Reduces unnecessary copying (especially since a function like sum doesn’t actually need to change the data)</li>
 <li>When code tries to change something, then copy is made</li>
 <li>How does this work?</li>
 </ul>
@@ -3445,7 +3437,7 @@ UNPROTECT(1);</pre>
 </article></slide><slide class=""><hgroup><h2>How does NAMED work?</h2></hgroup><article  id="how-does-named-work">
 
 <ul>
-<li>Let’s have a look at some inteRnals, the addres and NAMED Count</li>
+<li>Let’s have a look at some inteRnals, the address and NAMED Count</li>
 </ul>
 
 <pre class = 'prettyprint lang-r'>a = c(1,2,3)
@@ -3653,11 +3645,11 @@ for (i in 1:5){
   cat(address(lst), &quot;\n&quot;)
 }</pre>
 
-<pre >## 0x563946a769d8 
-## 0x563947a74d90 
-## 0x5639481a2680 
-## 0x5639481d1588 
-## 0x5639482452a0</pre>
+<pre >## 0x7f81d7c68c88 
+## 0x7f81d8c539c8 
+## 0x7f81d7d0a808 
+## 0x7f81d7d0a768 
+## 0x7f81d836c388</pre>
 
 </article></slide><slide class=""><hgroup><h2>Memory And Lists</h2></hgroup><article  id="memory-and-lists-4">
 
@@ -3672,11 +3664,11 @@ for (i in 1:5){
   cat(address(lst), &quot;\n&quot;)
 }</pre>
 
-<pre >## 0x563948662800 
-## 0x563948662800 
-## 0x563948662800 
-## 0x563948662800 
-## 0x563948662800</pre>
+<pre >## 0x7f81d7d0eea8 
+## 0x7f81d7d0eea8 
+## 0x7f81d7d0eea8 
+## 0x7f81d7d0eea8 
+## 0x7f81d7d0eea8</pre>
 
 </article></slide><slide class=""><hgroup><h2>Memory and Data Frames</h2></hgroup><article  id="memory-and-data-frames">
 
@@ -3705,19 +3697,21 @@ cppFunction(&#39;
  }
 &#39;)</pre>
 
-<pre class = 'prettyprint lang-r'>doubC = function(x) &quot;please fix&quot;</pre>
+<pre class = 'prettyprint lang-r'>a = c(1,2,3)
+b = a
+doubC(a)
+b</pre>
+
+<pre >## [1] 2 4 6</pre>
 
 </article></slide><slide class=""><hgroup><h2>Final Twist</h2></hgroup><article  id="final-twist-1">
 
 <pre class = 'prettyprint lang-r'>a = c(1,2,3)
 b = a
-doubC(a)</pre>
+doubC(a)
+b</pre>
 
-<pre >## [1] &quot;please fix&quot;</pre>
-
-<pre class = 'prettyprint lang-r'>b</pre>
-
-<pre >## [1] 1 2 3</pre>
+<pre >## [1] 2 4 6</pre>
 
 <ul>
 <li>Only Pure R follows the copy on modify semantics</li>
@@ -3831,13 +3825,13 @@ g1</pre>
 
 <pre class = 'prettyprint lang-r'>search()</pre>
 
-<pre >##  [1] &quot;.GlobalEnv&quot;        &quot;package:rlang&quot;     &quot;package:forcats&quot;  
-##  [4] &quot;package:stringr&quot;   &quot;package:dplyr&quot;     &quot;package:purrr&quot;    
-##  [7] &quot;package:readr&quot;     &quot;package:tidyr&quot;     &quot;package:tibble&quot;   
-## [10] &quot;package:ggplot2&quot;   &quot;package:tidyverse&quot; &quot;package:pryr&quot;     
-## [13] &quot;package:stats&quot;     &quot;package:graphics&quot;  &quot;package:grDevices&quot;
-## [16] &quot;package:utils&quot;     &quot;package:datasets&quot;  &quot;package:methods&quot;  
-## [19] &quot;Autoloads&quot;         &quot;package:base&quot;</pre>
+<pre >##  [1] &quot;.GlobalEnv&quot;        &quot;package:Rcpp&quot;      &quot;package:rlang&quot;    
+##  [4] &quot;package:forcats&quot;   &quot;package:stringr&quot;   &quot;package:dplyr&quot;    
+##  [7] &quot;package:purrr&quot;     &quot;package:readr&quot;     &quot;package:tidyr&quot;    
+## [10] &quot;package:tibble&quot;    &quot;package:ggplot2&quot;   &quot;package:tidyverse&quot;
+## [13] &quot;package:pryr&quot;      &quot;package:stats&quot;     &quot;package:graphics&quot; 
+## [16] &quot;package:grDevices&quot; &quot;package:utils&quot;     &quot;package:datasets&quot; 
+## [19] &quot;package:methods&quot;   &quot;Autoloads&quot;         &quot;package:base&quot;</pre>
 
 <ul>
 <li>these are the top level environments (also in RStudio)</li>
@@ -3848,7 +3842,7 @@ g1</pre>
 </article></slide><slide class=""><hgroup><h2>Aside: Environments</h2></hgroup><article  id="aside-environments-1">
 
 <ul>
-<li>Environments have a hierarchy, each function from <code>pryr</code> is defined in that environemnt, and the environments of those functions are linked to the parent one one</li>
+<li>Environments have a hierarchy, each function from <code>pryr</code> is defined in that environment, and the environments of those functions are linked to the parent one one</li>
 <li>This is how variable lookup works and names avoid conflict.
 
 <ul>
@@ -3875,7 +3869,7 @@ a</pre>
 </article></slide><slide class=""><hgroup><h2>What is Lazy Evaluation</h2></hgroup><article  id="what-is-lazy-evaluation">
 
 <ul>
-<li>Languages like haskell don’t do any evaluation until the last possible moment.</li>
+<li>Languages like Haskell don’t do any evaluation until the last possible moment.</li>
 </ul>
 
 <pre class = 'prettyprint lang-haskell'>infList =  [1,3,...]
@@ -4011,11 +4005,11 @@ eval(ex)</pre>
 }
 csel(hwy, cty)</pre>
 
-<pre >## Error: Evaluation error: object &#39;hwy&#39; not found.</pre>
+<pre >## Error in mutate_impl(.data, dots): Evaluation error: object &#39;hwy&#39; not found.</pre>
 
 <pre class = 'prettyprint lang-r'>csel(&quot;hwy&quot;, &quot;cty&quot;)</pre>
 
-<pre >## Error: Evaluation error: non-numeric argument to binary operator.</pre>
+<pre >## Error in mutate_impl(.data, dots): Evaluation error: non-numeric argument to binary operator.</pre>
 
 </article></slide><slide class=""><hgroup><h2>tidy functions</h2></hgroup><article  id="tidy-functions-1">
 
@@ -4270,9 +4264,9 @@ as.list(exp)</pre>
 <li>Radford Neal - <a href='https://radfordneal.wordpress.com/2010/08/15/two-surpising-things-about-r/' title=''>Patches to improve R speed by 25% and make more consistent</a>
 
 <ul>
-<li>Has since released pqR which is more performant than GNU R, but diverges on syntax</li>
+<li>Has since released pqR which is more performant than GNU R, but diverges on syntax in R3</li>
 </ul></li>
-<li>Christian Robert - <a href='https://xianblog.wordpress.com/2010/09/08/julien-on-r-shortcomings/' title=''>R’s not-so-brilliant language and/or interpreter</a>. Loves the libraries, dislikes the language</li>
+<li>Christian Robert - <a href='https://xianblog.wordpress.com/2010/09/08/julien-on-r-shortcomings/' title=''>R’s not-so-brilliant language and/or interpreter</a>. Loves the libraries, dislikes the language. &ldquo;CRAN&rdquo; deserves a better language.</li>
 <li><a href='https://www.burns-stat.com/documents/books/the-r-inferno/' title=''>The R Inferno</a> goes into incredible detail on the problems facing R</li>
 </ul>
 
@@ -4286,13 +4280,13 @@ as.list(exp)</pre>
 <li>Hadley was only famous for ggplot at this point</li>
 </ul>
 
-</article></slide><slide class=""><hgroup><h2>Light in 2014</h2></hgroup><article  id="light-in-2014">
+</article></slide><slide class=""><hgroup><h2>Dawn in 2014</h2></hgroup><article  id="dawn-in-2014">
 
 <ul>
 <li>Hadley became a full time R developer with RStudio.<br/></li>
 <li>Hadley invited to the R Software Foundation as an Ordinary Fellow (along with many others), guiding the language and it’s growth.</li>
 <li>More openness from the foundation, more regular releases, more accepting of patches</li>
-<li>RStudio hire knitr creator too. Hire a lot of R talent from universities and have them focus on developing R’s capabilities</li>
+<li>RStudio hire knitr creator too. Hire a lot of R talent from universities and have them focus on developing R’s capabilities.</li>
 <li>RStudio do the work the R Software Foundation, pumping out hugely important packages that underpin a lot of modern R.</li>
 </ul>
 
@@ -4303,34 +4297,23 @@ as.list(exp)</pre>
 </article></slide><slide class=""><hgroup><h2>Today</h2></hgroup><article  id="today">
 
 <ul>
-<li>The R language for all it’s flaws, has a solid base in LISP/Scheme and gives developer’s the keys to the kingdom.</li>
-<li>Python’s success in DS is almost certainly related to R’s popularity and problems
+<li>The R language has a solid base in LISP/Scheme and gives developer’s the keys to the kingdom.</li>
+<li>This is one of the main reasons why R is and always will be relevant. As long as there are package developers, the language is almost infinitely extensible in a way not possible in most languages.</li>
+<li>Python’s popularity in DS owes a lot to R.
 
 <ul>
-<li>Common ancestor in LISP and numeric library (numpy) available in late 2008.</li>
-<li>Very similar languages, and much better CS fundamentals</li>
-<li>Would have likely still been popular given the CS</li>
-</ul></li>
-<li>R still lacks generic and efficient data structures to make all purpose programming easy.
-
-<ul>
-<li>Many parts of the base langauge are still unoptimised</li>
+<li>Common ancestor in LISP and numeric library (numpy) available in late 2008 made it an obvious alternative. Popularity coincided with the frustration with R</li>
+<li>Would have likely still been popular given the CS presence in DS, but DS in 2012 was still Java centric in CS.</li>
 </ul></li>
 </ul>
 
 </article></slide><slide class=""><hgroup><h2>R and I</h2></hgroup><article  id="r-and-i">
 
 <ul>
-<li>I still use R, especially when generating reports for less data savvy people.</li>
-<li>I don’t see R as a programming language, more of a tool</li>
-<li>I still use R often (most of my work with the greens), but as a user not a developer.
-
-<ul>
-<li>I rarely use more than one .R or .Rmd file and rarely reuse R code</li>
-<li>Anything long term goes into a different language. <code>dplyr</code> syntax doesn’t play nicely in functions.</li>
-</ul></li>
-<li>R has a very steep learning curve. Most will never reach Advanced R.</li>
-<li>Heavily influenced me to head down more functional programming</li>
+<li>I still use R quite often, but I don’t see it as a programming language any more.</li>
+<li>Advanced R is a <strong>really</strong> steep learning curve. Even classes seem labyrinthine.</li>
+<li>I interact with it primarily as a really convenient stats tool, mostly interactive scripting and markdown reports.</li>
+<li>R is still not on par with other languages. Testing, CI, deployment is still well behind other languages</li>
 </ul></article></slide>
 
 
