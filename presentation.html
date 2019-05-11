@@ -3645,11 +3645,11 @@ for (i in 1:5){
   cat(address(lst), &quot;\n&quot;)
 }</pre>
 
-<pre >## 0x7f81d7c68c88 
-## 0x7f81d8c539c8 
-## 0x7f81d7d0a808 
-## 0x7f81d7d0a768 
-## 0x7f81d836c388</pre>
+<pre >## 0x7fbd074d81f0 
+## 0x7fbd07579ac8 
+## 0x7fbd075c5ab8 
+## 0x7fbd075c5a18 
+## 0x7fbd0795ad88</pre>
 
 </article></slide><slide class=""><hgroup><h2>Memory And Lists</h2></hgroup><article  id="memory-and-lists-4">
 
@@ -3664,11 +3664,11 @@ for (i in 1:5){
   cat(address(lst), &quot;\n&quot;)
 }</pre>
 
-<pre >## 0x7f81d7d0eea8 
-## 0x7f81d7d0eea8 
-## 0x7f81d7d0eea8 
-## 0x7f81d7d0eea8 
-## 0x7f81d7d0eea8</pre>
+<pre >## 0x7fbd078c68e8 
+## 0x7fbd078c68e8 
+## 0x7fbd078c68e8 
+## 0x7fbd078c68e8 
+## 0x7fbd078c68e8</pre>
 
 </article></slide><slide class=""><hgroup><h2>Memory and Data Frames</h2></hgroup><article  id="memory-and-data-frames">
 
@@ -4005,11 +4005,11 @@ eval(ex)</pre>
 }
 csel(hwy, cty)</pre>
 
-<pre >## Error in mutate_impl(.data, dots): Evaluation error: object &#39;hwy&#39; not found.</pre>
+<pre >## Error: object &#39;hwy&#39; not found</pre>
 
 <pre class = 'prettyprint lang-r'>csel(&quot;hwy&quot;, &quot;cty&quot;)</pre>
 
-<pre >## Error in mutate_impl(.data, dots): Evaluation error: non-numeric argument to binary operator.</pre>
+<pre >## Error in farg/sarg: non-numeric argument to binary operator</pre>
 
 </article></slide><slide class=""><hgroup><h2>tidy functions</h2></hgroup><article  id="tidy-functions-1">
 
@@ -4305,15 +4305,6 @@ as.list(exp)</pre>
 <li>Common ancestor in LISP and numeric library (numpy) available in late 2008 made it an obvious alternative. Popularity coincided with the frustration with R</li>
 <li>Would have likely still been popular given the CS presence in DS, but DS in 2012 was still Java centric in CS.</li>
 </ul></li>
-</ul>
-
-</article></slide><slide class=""><hgroup><h2>R and I</h2></hgroup><article  id="r-and-i">
-
-<ul>
-<li>I still use R quite often, but I don’t see it as a programming language any more.</li>
-<li>Advanced R is a <strong>really</strong> steep learning curve. Even classes seem labyrinthine.</li>
-<li>I interact with it primarily as a really convenient stats tool, mostly interactive scripting and markdown reports.</li>
-<li>R is still not on par with other languages. Testing, CI, deployment is still well behind other languages</li>
 </ul></article></slide>
 
 

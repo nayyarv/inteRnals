@@ -1,5 +1,8 @@
 Note: An incomplete summary of the talk
 
+- [PDF Slides](presentation.pdf)
+- [HTML Slides](presentation.html)
+
 # inteRnals
 
 R was first written as an open source implementation of Bell's S language at Auckland Uni back in 1997 (Hadley went there from 1999-2004) with work starting in 1992. Statistical computing was primarily closed source at this time with SAS, SPSS and S/Splus and even Ross Ihaka and Robert Gentleman initally considered making R a product instead of a free open source language, so we should be glad that this ended up better than expected. Comparing R and Splus with Octave and Matlab, it's quite possible that R would never have reached the popularity it enjoys today. In fact without R, it's quite possible to imagine even fewer data scientists coming from a mathematical background, and without Hadley, it's quite possible to imagine R remaining a pure domain of university and research instead of it's current usage in industry too.

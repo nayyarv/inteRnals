@@ -2,7 +2,7 @@
 title: "inteRnals"
 author: "Varun Nayyar"
 date: "27/04/2019"
-output: ioslides_presentation
+output: beamer_presentation
 ---
 
 ```{r setup, include=FALSE}
@@ -991,11 +991,3 @@ Statistical Computing System](https://www.stat.auckland.ac.nz/~ihaka/downloads/C
 - Python's popularity in DS owes a lot to R.
   - Common ancestor in LISP and numeric library (numpy) available in late 2008 made it an obvious alternative. Popularity coincided with the frustration with R
   - Would have likely still been popular given the CS presence in DS, but DS in 2012 was still Java centric in CS.
-
-## R and I
-
-- I still use R quite often, but I don't see it as a programming language any more.
-- Advanced R is a **really** steep learning curve. Even classes seem labyrinthine. 
-- I interact with it primarily as a really convenient stats tool, mostly interactive scripting and markdown reports.
-- R is still not on par with other languages. Testing, CI, deployment is still well behind other languages
-
