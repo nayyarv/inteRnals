@@ -1,4 +1,4 @@
-Note: An incomplete summary of the talk
+Note: The readme is an incomplete summary of the talk. Please look at the presentation for the full talk
 
 - [PDF Slides](presentation.pdf)
 - [HTML Slides](presentation.html)
